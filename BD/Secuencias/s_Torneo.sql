@@ -1,0 +1,14 @@
+--
+-- Secuencia: Torneo
+--
+-- DROP SEQUENCE IF EXISTS s_Torneo;
+
+CREATE SEQUENCE IF NOT EXISTS s_Torneo
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 99999999999
+    ;
+
+ALTER SEQUENCE s_Torneo
+    OWNER TO postgres;
