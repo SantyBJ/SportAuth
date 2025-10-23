@@ -1,16 +1,21 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for # type: ignore
 import psycopg2
+import os
+from dotenv import load_dotenv # type: ignore
+
+load_dotenv()  # Carga las variables del archivo .env
 
 app = Flask(__name__)
 
-# --- Configuración conexión PostgreSQL ---
 def get_connection():
     return psycopg2.connect(
-    dbname="SportAuth",
-    user="postgres",
-    password="S@ntiago21",
-    port="5432"
+        dbname=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        host=os.getenv("DB_HOST"),
+        port=os.getenv("DB_PORT")
     )
+
 
 # --- Página principal (formulario para agregar) ---
 @app.route('/')
