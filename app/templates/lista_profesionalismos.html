@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Profesionalismos</title>
+</head>
+<body>
+  <h1>Profesionalismos Registrados</h1>
+  <table border="1" cellpadding="5">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Deporte</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in profesionalismos %}
+      <tr>
+        <td>{{ p[0] }}</td>
+        <td>{{ p[1] }}</td>
+        <td>{{ p[2] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <br>
+  <a href="/">Volver al formulario</a>
+</body>
+</html>
