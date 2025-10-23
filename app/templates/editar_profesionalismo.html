@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Profesionalismo</title>
+</head>
+<body>
+  <h1>Editar Profesionalismo</h1>
+  <form action="/actualizar" method="post">
+    <input type="hidden" name="id" value="{{ profesionalismo[0] }}">
+
+    <label for="deporte">Deporte:</label>
+    <select name="deporte" id="deporte" required>
+      {% for d in deportes %}
+        <option value="{{ d[0] }}" {% if d[0] == profesionalismo[2] %}selected{% endif %}>{{ d[1] }}</option>
+      {% endfor %}
+    </select>
+    <br><br>
+
+    <label for="descripcion">Descripción:</label>
+    <input type="text" id="descripcion" name="descripcion" value="{{ profesionalismo[1] }}" required>
+    <br><br>
+
+    <button type="submit">Actualizar</button>
+  </form>
+
+  <br>
+  <a href="/listar">Volver a la lista</a>
+</body>
+</html>

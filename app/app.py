@@ -12,18 +12,18 @@ def get_connection():
     port="5432"
     )
 
-# --- Página principal: formulario con lista de deportes ---
+# --- Página principal (formulario para agregar) ---
 @app.route('/')
 def index():
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT dprt_dprt, dprt_descri FROM t_deportes ORDER BY dprt_dprt;")  # Ajusta nombres según tu tabla real
+    cursor.execute("SELECT dprt_dprt, dprt_descri FROM t_deportes ORDER BY dprt_dprt;")
     deportes = cursor.fetchall()
     cursor.close()
     conn.close()
     return render_template('form_profesionalismo.html', deportes=deportes)
 
-# --- Insertar profesionalismo ---
+# --- Crear profesionalismo ---
 @app.route('/insertar', methods=['POST'])
 def insertar():
     deporte_id = request.form['deporte']
@@ -48,7 +48,7 @@ def listar():
     cursor = conn.cursor()
     cursor.execute("""
         SELECT prfm_prfm, dprt_descri, prfm_descri
-        FROM t_profesionalismo p
+        FROM t_profesionalismo
         JOIN t_deportes ON dprt_dprt = prfm_dprt
         ORDER BY prfm_prfm;
     """)
@@ -56,6 +56,58 @@ def listar():
     cursor.close()
     conn.close()
     return render_template('lista_profesionalismos.html', profesionalismos=data)
+
+# --- Formulario de edición ---
+@app.route('/editar/<int:id>')
+def editar(id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT prfm_prfm, prfm_descri, prfm_dprt
+        FROM t_profesionalismo WHERE prfm_prfm = %s;
+    """, (id,))
+    profesionalismo = cursor.fetchone()
+
+    cursor.execute("SELECT dprt_dprt, dprt_descri FROM t_deportes ORDER BY dprt_dprt;")
+    deportes = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+    return render_template('editar_profesionalismo.html', profesionalismo=profesionalismo, deportes=deportes)
+
+# --- Actualizar profesionalismo ---
+@app.route('/actualizar', methods=['POST'])
+def actualizar():
+    id_prof = request.form['id']
+    deporte = request.form['deporte']
+    descripcion = request.form['descripcion']
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE t_profesionalismo
+        SET prfm_dprt = %s,
+            prfm_descri = %s,
+            prfm_usua_alt = USER,
+            prfm_fecalt = CURRENT_TIMESTAMP
+        WHERE prfm_prfm = %s;
+    """, (deporte, descripcion, id_prof))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return redirect(url_for('listar'))
+
+# --- Eliminar profesionalismo ---
+@app.route('/eliminar/<int:id>')
+def eliminar(id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM t_profesionalismo WHERE prfm_prfm = %s;", (id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return redirect(url_for('listar'))
 
 if __name__ == '__main__':
     app.run(debug=True)
