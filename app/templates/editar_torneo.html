@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Torneo</title>
+</head>
+<body>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div style="color: {% if category == 'error' %}red{% else %}green{% endif %}; font-weight:bold;">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  <h1>Editar Torneo</h1>
+
+  <form action="{{ url_for('torneos.actualizar_torneo') }}" method="POST">
+    <input type="hidden" name="id" value="{{ torneo[0] }}">
+
+    <label>Nombre:</label>
+    <input type="text" name="nombre" value="{{ torneo[1] }}" required><br>
+
+    <label>Mín. Equipos:</label>
+    <input type="number" name="min_equipos" value="{{ torneo[2] }}" required>
+    <label>Máx. Equipos:</label>
+    <input type="number" name="max_equipos" value="{{ torneo[3] }}" required><br>
+
+    <label>Mín. Jugadores:</label>
+    <input type="number" name="min_jugadores" value="{{ torneo[4] }}" required>
+    <label>Máx. Jugadores:</label>
+    <input type="number" name="max_jugadores" value="{{ torneo[5] }}" required><br>
+
+    <label>Género:</label>
+    <select name="genero" required>
+      <option value="M" {% if torneo[6] == 'M' %}selected{% endif %}>Masculino</option>
+      <option value="F" {% if torneo[6] == 'F' %}selected{% endif %}>Femenino</option>
+    </select><br>
+
+    <label>Fecha Inicio:</label>
+    <input type="date" name="fecini" value="{{ torneo[7] }}" required>
+    <label>Fecha Fin:</label>
+    <input type="date" name="fecfin" value="{{ torneo[8] }}" required>
+
+    <label>Deporte:</label>
+    <select name="deporte">
+      {% for dep in deportes %}
+        <option value="{{ dep[0] }}" {% if dep[0] == torneo[9] %}selected{% endif %}>{{ dep[1] }}</option>
+      {% endfor %}
+    </select><br>
+
+    <fieldset>
+      <legend>Profesionalismos:</legend>
+      {% for prfm in profesionalismos %}
+        <input type="checkbox" name="profesionalismos" value="{{ prfm[0] }}"
+               {% if prfm[0] in seleccionados %}checked{% endif %}>
+        {{ prfm[1] }}<br>
+      {% endfor %}
+    </fieldset>
+
+    <label>Estado:</label>
+    <select name="estado">
+      <option value="True" {% if torneo[10] %}selected{% endif %}>Activo</option>
+      <option value="False" {% if not torneo[10] %}selected{% endif %}>Inactivo</option>
+    </select><br>
+
+    <br>
+    <button type="submit">Actualizar</button>
+  </form>
+
+  <br>
+  <a href="{{ url_for('torneos.listar_torneos') }}">Volver a la lista</a>
+</body>
+</html>

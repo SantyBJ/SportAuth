@@ -24,8 +24,8 @@
         <td>{{ p[2] }}</td>
         <td>{{ p[3] }}</td>
         <td>
-          <a href="/editar/{{ p[0] }}">Editar</a> |
-          <a href="/eliminar/{{ p[0] }}" onclick="return confirm('¿Seguro que deseas eliminar este registro?')">🗑️ Eliminar</a>
+          <a href="/editar_profesionalismos/{{ p[0] }}">Editar</a> |
+          <a href="/eliminar_profesionalismo/{{ p[0] }}" onclick="return confirm('¿Seguro que deseas eliminar este registro?')">🗑️ Eliminar</a>
         </td>
       </tr>
       {% endfor %}
@@ -33,6 +33,6 @@
   </table>
 
   <br>
-  <a href="/">Volver al formulario</a>
+  <a href="/">Registrar nuevo Profesionalismo</a>
 </body>
 </html>

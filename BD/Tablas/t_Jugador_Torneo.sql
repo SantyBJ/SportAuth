@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS t_Jugador_Torneo
     jgtr_jugador      NUMERIC(15,0)
    ,jgtr_torneo       NUMERIC(11,0)
    ,jgtr_equipo       NUMERIC(5,0)  CONSTRAINT nn_jgtr_equipo       NOT NULL
-   ,jgtr_posicion     NUMERIC(5,0)  CONSTRAINT nn_jgtr_posicion     NOT NULL
    ,jgtr_nro_camiseta NUMERIC(2,0)  CONSTRAINT nn_jgtr_nro_camiseta NOT NULL
    ,jgtr_usua         VARCHAR(30)   CONSTRAINT nn_jgtr_usua         NOT NULL DEFAULT USER
    ,jgtr_feccre       TIMESTAMP     CONSTRAINT nn_jgtr_feccre       NOT NULL DEFAULT CURRENT_TIMESTAMP

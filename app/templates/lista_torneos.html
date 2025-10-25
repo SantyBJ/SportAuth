@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Torneos</title>
+</head>
+<body>
+  <h1>Torneos Registrados</h1>
+
+  <table border="1" cellpadding="5">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Deporte</th>
+        <th>Profesionalismos</th>
+        <th>Fecha Inicio</th>
+        <th>Fecha Fin</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in torneos %}
+      <tr>
+        <td>{{ t[0] }}</td>
+        <td>{{ t[1] }}</td>
+        <td>{{ t[2] }}</td>
+        <td>{{ t[3] }}</td>
+        <td>{{ t[4] }}</td>
+        <td>{{ t[5] }}</td>
+        <td>{{ t[6] }}</td>
+        <td>
+          <a href="/editar_torneo/{{ t[0] }}">Editar</a> |
+          <a href="/eliminar_torneo/{{ t[0] }}" onclick="return confirm('¿Seguro que deseas eliminar este torneo?')">🗑️ Eliminar</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <br>
+  <a href="/torneos">Registrar nuevo torneo</a>
+</body>
+</html>

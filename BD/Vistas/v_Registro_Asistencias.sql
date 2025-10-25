@@ -1,7 +1,7 @@
 --
 -- Vista: v_Registro_Asistencias
 --
-
+/*
 CREATE OR REPLACE VIEW v_Registro_Asistencias AS
 	SELECT Emp.cedula 						    AS Cedula
 		  ,(Emp.Nombres || ' ' ||Emp.Apellidos) AS Nombre_Completo
@@ -22,4 +22,5 @@ COMMENT ON COLUMN v_Registro_Asistencias.Cargo           IS 'Cargo en la empresa
 COMMENT ON COLUMN v_Registro_Asistencias.Area            IS 'Area en la que opera';
 COMMENT ON COLUMN v_Registro_Asistencias.Ingreso         IS 'Fecha de hora de ingreso del empleado en el registro';
 COMMENT ON COLUMN v_Registro_Asistencias.Salida          IS 'Fecha de hora de salida del empleado en el registro';
-COMMENT ON COLUMN v_Registro_Asistencias.Horas_Extra     IS 'Horas Extra si llega a tener';
+COMMENT ON COLUMN v_Registro_Asistencias.Horas_Extra     IS 'Horas Extra si llega a tener';*/
+NULL;

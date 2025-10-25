@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Torneos</title>
+</head>
+<body>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div style="color: {% if category == 'error' %}red{% else %}green{% endif %}; font-weight:bold;">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  <h1>Registrar Torneos</h1>
+    <form action="{{ url_for('torneos.insertar_torneo') }}" method="POST">
+    <label>Nombre:</label>
+    <input type="text" name="nombre" value="{{ nombre or '' }}" required><br>
+    
+    <label>Mín. Equipos:</label>
+    <input type="number" name="min_equipos" value="{{ min_equipos or '' }}" required>
+    <label>Máx. Equipos:</label>
+    <input type="number" name="max_equipos" value="{{ max_equipos or '' }}" required><br>
+    
+    <label>Mín. Jugadores:</label>
+    <input type="number" name="min_jugadores" value="{{ min_jugadores or '' }}" required>
+    <label>Máx. Jugadores:</label>
+    <input type="number" name="max_jugadores" value="{{ max_jugadores or '' }}" required><br>
+    
+    <label>Género:</label>
+    <select name="genero" required>
+        <option value="M">Masculino</option>
+        <option value="F">Femenino</option>
+    </select><br>
+    
+    <label>Fecha Inicio:</label>
+    <input type="date" name="fecini" value="{{ fecini or '' }}" required>
+    <label>Fecha Fin:</label>
+    <input type="date" name="fecfin" value="{{ fecfin or '' }}" required><br>
+    
+    <label>Deporte:</label>
+    <select name="deporte">
+        {% for dep in deportes %}
+        <option value="{{ dep[0] }}">{{ dep[1] }}</option>
+        {% endfor %}
+    </select><br>
+    
+    <fieldset>
+        <legend>Profesionalismos:</legend>
+        {% for prfm in profesionalismos %}
+        <input type="checkbox" name="profesionalismos" value="{{ prfm[0] }}"> {{ prfm[1] }}<br>
+        {% endfor %}
+    </fieldset>
+    
+    <button type="submit">Guardar Torneo</button>
+    </form>
+  <br>
+  <a href="listar_torneos">Ver lista de torneos</a>
+</body>
+</html>

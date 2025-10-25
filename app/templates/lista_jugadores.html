@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Listado de Jugadores</title>
+</head>
+<body>
+  <h1>Listado de Jugadores</h1>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+        {% for category, message in messages %}
+          <li><strong>{{ category|capitalize }}:</strong> {{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <a href="/jugadores">Registrar nuevo jugador</a>
+  <br><br>
+
+  <table border="1" cellpadding="5">
+    <thead>
+      <tr>
+        <th>Cédula</th>
+        <th>Nombres</th>
+        <th>Apellidos</th>
+        <th>Género</th>
+        <th>Profesionalismo</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for j in jugadores %}
+      <tr>
+        <td>{{ j[0] }}</td>
+        <td>{{ j[1] }}</td>
+        <td>{{ j[2] }}</td>
+        <td>{{ j[3] }}</td>
+        <td>{{ j[4] }}</td>
+        <td>{{ j[5] }}</td>
+        <td>
+          <a href="/editar_jugador/{{ j[0] }}">Editar</a> |
+          <a href="/eliminar_jugador/{{ j[0] }}" onclick="return confirm('¿Desea eliminar este jugador?');">Eliminar</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

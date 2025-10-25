@@ -1,8 +1,8 @@
--- Funcion Trigger: df_profesionalismo_biu()
+-- Funcion Trigger: df_profesionalismo_aiu()
 
--- DROP FUNCTION IF EXISTS df_profesionalismo_biu();
+-- DROP FUNCTION IF EXISTS df_profesionalismo_aiu();
 
-CREATE OR REPLACE FUNCTION df_profesionalismo_biu()
+CREATE OR REPLACE FUNCTION df_profesionalismo_aiu()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
@@ -27,11 +27,11 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION df_profesionalismo_biu()
+ALTER FUNCTION df_profesionalismo_aiu()
     OWNER TO postgres;
 
-CREATE OR REPLACE TRIGGER d_profesionalismo_biu
+CREATE OR REPLACE TRIGGER d_profesionalismo_aiu
     AFTER INSERT OR UPDATE 
     ON t_profesionalismo
     FOR EACH ROW
-    EXECUTE FUNCTION df_profesionalismo_biu();
+    EXECUTE FUNCTION df_profesionalismo_aiu();
