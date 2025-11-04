@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Equipos por Torneo</title>
+</head>
+<body>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div style="color: {% if category == 'error' %}red{% else %}green{% endif %}; font-weight:bold;">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <h1>Gestión de Equipos del Torneo</h1>
+
+  <h3>Datos del Torneo</h3>
+  <table border="1" cellpadding="5">
+    <tr><th>ID</th><td>{{ torneo[0] }}</td></tr>
+    <tr><th>Nombre</th><td>{{ torneo[1] }}</td></tr>
+    <tr><th>Mínimo Equipos</th><td>{{ torneo[2] }}</td></tr>
+    <tr><th>Máximo Equipos</th><td>{{ torneo[3] }}</td></tr>
+    <tr><th>Estado</th><td>{{ torneo[4] }}</td></tr>
+  </table>
+
+  <br>
+  <h3>Registro de Equipos en el Torneo</h3>
+  <p><strong>Total Equipos:</strong> {{ equipos|length }} / {{ torneo[3] }}</p>
+
+  {% if equipos|length < torneo[3] %}
+    <form action="{{ url_for('equipo_torneo.insertar_equipo_torneo') }}" method="POST">
+      <input type="hidden" name="id_torneo" value="{{ torneo[0] }}">
+      <label>Seleccionar Equipo:</label>
+      <select name="id_equipo" required>
+        {% for eq in disponibles %}
+          <option value="{{ eq[0] }}">{{ eq[1] }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Agregar Equipo</button>
+    </form>
+  {% else %}
+    <div style="color:red; font-weight:bold;">
+      Se ha alcanzado el número máximo de equipos permitidos para este torneo.
+    </div>
+  {% endif %}
+
+  <br><hr><br>
+
+  <h3>Equipos Registrados</h3>
+  <table border="1" cellpadding="5">
+    <thead>
+      <tr>
+        <th>Equipo</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for eq in equipos %}
+      <tr>
+        <td>{{ eq[1] }}</td>
+        <td>{{ 'Activo' if eq[2] else 'Inactivo' }}</td>
+        <td>
+          <a href="{{ url_for('equipo_torneo.cambiar_estado_equipo_torneo', id_torneo=torneo[0], id_equipo=eq[0]) }}">
+            {{ 'Inactivar' if eq[2] else 'Activar' }}
+          </a>
+          |
+          <a href="{{ url_for('equipo_torneo.eliminar_equipo_torneo', id_torneo=torneo[0], id_equipo=eq[0]) }}"
+             onclick="return confirm('¿Desea eliminar este equipo del torneo?')">🗑️ Eliminar</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <br>
+  <a href="{{ url_for('torneos.listar_torneos') }}">Volver a lista de torneos</a>
+</body>
+</html>

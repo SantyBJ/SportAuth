@@ -33,6 +33,7 @@
     <select name="genero" required>
         <option value="M">Masculino</option>
         <option value="F">Femenino</option>
+        <option value="NULL" {% if genero is none or genero == 'NULL' %}selected{% endif %}>Mixto</option>
     </select><br>
     
     <label>Fecha Inicio:</label>

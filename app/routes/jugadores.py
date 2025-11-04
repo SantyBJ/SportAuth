@@ -50,14 +50,42 @@ def insertar_jugador():
     cursor = conn.cursor()
 
     try:
+        # Verificar duplicado
+        cursor.execute("SELECT COUNT(*) FROM t_jugadores WHERE jgdr_jgdr = %s;", (cedula,))
+        existe = cursor.fetchone()[0]
+
+        if existe > 0:
+            # Traer nuevamente la lista de profesionalismos para el formulario
+            cursor.execute("SELECT prfm_prfm, prfm_descri FROM t_profesionalismo ORDER BY prfm_descri;")
+            profesionalismos = cursor.fetchall()
+            flash(f"Ya existe un jugador registrado con la cédula {cedula}.", "error")
+
+            # Cerrar conexión
+            cursor.close()
+            conn.close()
+
+            return render_template(
+                'form_jugador.html',
+                profesionalismos=profesionalismos,
+                nombres=nombres,
+                apellidos=apellidos,
+                genero=genero,
+                profesionalismo=profesionalismo,
+                cedula=""
+            )
+
+        # Si no existe, insertar normalmente
         cursor.execute("""
             INSERT INTO t_jugadores (jgdr_jgdr, jgdr_nombres, jgdr_apelidos, jgdr_genero, jgdr_prfm)
             VALUES (%s, %s, %s, %s, %s);
         """, (cedula, nombres, apellidos, genero, profesionalismo))
         conn.commit()
+        flash("Jugador registrado exitosamente.", "success")
+
     except Exception as e:
         conn.rollback()
         flash(f"Error al insertar jugador: {str(e)}", "error")
+
     finally:
         cursor.close()
         conn.close()
@@ -114,7 +142,6 @@ def actualizar_jugador():
             WHERE jgdr_jgdr = %s;
         """, (nombres, apellidos, genero, profesionalismo, estado, cedula))
         conn.commit()
-        flash("Jugador actualizado correctamente.", "success")
     except Exception as e:
         conn.rollback()
         flash(f"Error al actualizar jugador: {str(e)}", "error")
@@ -130,8 +157,22 @@ def eliminar_jugador(id):
     conn = get_connection()
     cursor = conn.cursor()
     try:
+        cursor.execute("""
+            SELECT COUNT(*) 
+            FROM t_jugador_torneo
+            WHERE jgtr_jugador = %s;
+        """, (id,))
+        asociado = cursor.fetchone()[0]
+
+        if asociado > 0:
+            flash("El jugador no puede ser borrado debido a que está en torneos.", "error")
+            cursor.close()
+            conn.close()
+            return redirect(url_for('jugadores.listar_jugadores'))
+        
         cursor.execute("DELETE FROM t_jugadores WHERE jgdr_jgdr = %s;", (id,))
         conn.commit()
+        flash("Jugador eliminado correctamente.", "success")
     except Exception as e:
         conn.rollback()
         flash(f"Error al eliminar jugador: {str(e)}", "error")

@@ -36,6 +36,7 @@
     <select name="genero" required>
       <option value="M" {% if torneo[6] == 'M' %}selected{% endif %}>Masculino</option>
       <option value="F" {% if torneo[6] == 'F' %}selected{% endif %}>Femenino</option>
+      <option value="NULL" {% if not torneo[6] %}selected{% endif %}>Mixto</option>
     </select><br>
 
     <label>Fecha Inicio:</label>
@@ -61,8 +62,9 @@
 
     <label>Estado:</label>
     <select name="estado">
-      <option value="True" {% if torneo[10] %}selected{% endif %}>Activo</option>
-      <option value="False" {% if not torneo[10] %}selected{% endif %}>Inactivo</option>
+      <option value="P" {% if torneo[10] == 'P' %}selected{% endif %}>Programado</option>
+      <option value="E" {% if torneo[10] == 'E' %}selected{% endif %}>En ejecución</option>
+      <option value="F" {% if torneo[10] == 'F' %}selected{% endif %}>Finalizado</option>
     </select><br>
 
     <br>

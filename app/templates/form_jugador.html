@@ -11,36 +11,40 @@
     {% if messages %}
       <ul>
         {% for category, message in messages %}
-          <li><strong>{{ category|capitalize }}:</strong> {{ message }}</li>
+          <li style="color: {% if category == 'error' %}red{% else %}green{% endif %}">
+            <strong>{{ category|capitalize }}:</strong> {{ message }}
+          </li>
         {% endfor %}
       </ul>
     {% endif %}
   {% endwith %}
 
-  <form action="/insertar_jugador" method="post">
+  <form action="{{ url_for('jugadores.insertar_jugador') }}" method="post">
     <label for="cedula">Cédula:</label>
-    <input type="number" id="cedula" name="cedula" required>
+    <input type="number" id="cedula" name="cedula" value="{{ cedula or '' }}" required>
     <br><br>
 
     <label for="nombres">Nombres:</label>
-    <input type="text" id="nombres" name="nombres" required>
+    <input type="text" id="nombres" name="nombres" value="{{ nombres or '' }}" required>
     <br><br>
 
     <label for="apellidos">Apellidos:</label>
-    <input type="text" id="apellidos" name="apellidos" required>
+    <input type="text" id="apellidos" name="apellidos" value="{{ apellidos or '' }}" required>
     <br><br>
 
     <label for="genero">Género:</label>
     <select id="genero" name="genero" required>
-      <option value="M">Masculino</option>
-      <option value="F">Femenino</option>
+      <option value="M" {% if genero == 'M' %}selected{% endif %}>Masculino</option>
+      <option value="F" {% if genero == 'F' %}selected{% endif %}>Femenino</option>
     </select>
     <br><br>
 
     <label for="profesionalismo">Profesionalismo:</label>
     <select id="profesionalismo" name="profesionalismo" required>
       {% for p in profesionalismos %}
-        <option value="{{ p[0] }}">{{ p[1] }}</option>
+        <option value="{{ p[0] }}" {% if p[0]|string == profesionalismo|string %}selected{% endif %}>
+          {{ p[1] }}
+        </option>
       {% endfor %}
     </select>
     <br><br>
@@ -49,6 +53,6 @@
   </form>
 
   <br>
-  <a href="/listar_jugadores">Volver a la lista</a>
+  <a href="{{ url_for('jugadores.listar_jugadores') }}">Volver a la lista</a>
 </body>
 </html>

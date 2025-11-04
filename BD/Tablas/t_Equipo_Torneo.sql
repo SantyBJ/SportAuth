@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS t_Equipo_Torneo
 (
     eqtn_equipo NUMERIC(5,0)
    ,eqtn_torneo NUMERIC(11,0)
-   ,eqtn_estado BOOLEAN       CONSTRAINT nn_eqtn_estado DEFAULT TRUE
+   ,eqtn_estado BOOLEAN       CONSTRAINT nn_eqtn_estado NOT NULL DEFAULT TRUE
 )
 TABLESPACE pg_default;
 --

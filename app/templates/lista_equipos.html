@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Equipos</title>
+</head>
+<body>
+  <h1>Lista de equipos</h1>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <p style="color: {{ 'green' if category == 'success' else 'red' }}">{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <table border="1" cellpadding="5">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for eq in equipos %}
+      <tr>
+        <td>{{ eq[0] }}</td>
+        <td>{{ eq[1] }}</td>
+        <td>{{ 'Activo' if eq[2] else 'Inactivo' }}</td>
+        <td>
+          <a href="{{ url_for('equipos.editar_equipo', id=eq[0]) }}">Editar</a> |
+          <a href="{{ url_for('equipos.eliminar_equipo', id=eq[0]) }}" onclick="return confirm('¿Desea eliminar este equipo?')">Eliminar</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="{{ url_for('equipos.equipos') }}">Registrar nuevo equipo</a>
+</body>
+</html>

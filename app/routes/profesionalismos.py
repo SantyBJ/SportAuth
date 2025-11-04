@@ -84,6 +84,29 @@ def actualizar_profesionalismo():
 def eliminar_profesionalismo(id):
     conn = get_connection()
     cursor = conn.cursor()
+    # --- Verificar si hay jugadores asociados ---
+    cursor.execute("""
+        SELECT COUNT(*) FROM t_jugadores
+        WHERE jgdr_prfm = %s;
+    """, (id,))
+    jugadores_count = cursor.fetchone()[0]
+
+    # --- Verificar si hay torneos asociados ---
+    cursor.execute("""
+        SELECT COUNT(*) FROM t_profesionalismo_torneo
+        WHERE prtn_profesionalismo = %s;
+    """, (id,))
+    torneos_count = cursor.fetchone()[0]
+
+    if jugadores_count > 0 or torneos_count > 0:
+        cursor.close()
+        conn.close()
+        if torneos_count > 0:
+            flash("No se puede eliminar el profesionalismo porque tiene torneos asociados.", "error")
+        else:
+            flash("No se puede eliminar el profesionalismo porque tiene jugadores asociados.", "error")
+        return redirect(url_for('profesionalismos.listar_profesionalismos'))
+    
     cursor.execute("DELETE FROM t_profesionalismo WHERE prfm_prfm = %s;", (id,))
     conn.commit()
     cursor.close()

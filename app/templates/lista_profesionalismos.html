@@ -5,6 +5,15 @@
   <title>Lista de Profesionalismos</title>
 </head>
 <body>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div style="color: {% if category == 'error' %}red{% else %}green{% endif %}; font-weight:bold;">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
   <h1>Profesionalismos Registrados</h1>
   <table border="1" cellpadding="5">
     <thead>

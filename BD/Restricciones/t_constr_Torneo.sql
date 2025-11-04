@@ -7,5 +7,6 @@ ALTER TABLE t_Torneo ADD CONSTRAINT ch_torneo_min_equipos   CHECK (trno_min_equi
 ALTER TABLE t_Torneo ADD CONSTRAINT ch_torneo_max_equipos   CHECK (trno_max_equipos >= trno_min_equipos);
 ALTER TABLE t_Torneo ADD CONSTRAINT ch_torneo_genero        CHECK (trno_genero IN ('F', 'M'));
 ALTER TABLE t_Torneo ADD CONSTRAINT ch_torneo_fechas        CHECK (trno_fecini < trno_fecfin);
+ALTER TABLE t_Torneo ADD CONSTRAINT ch_torneo_estado        CHECK (trno_estado IN ('P', 'E', 'F'));
 
 ALTER TABLE t_Torneo ADD CONSTRAINT fk_Torneo_Deporte FOREIGN KEY (trno_dprt) REFERENCES t_Deportes(dprt_dprt);
