@@ -117,8 +117,8 @@ def insertar_equipo_torneo():
 
     try:
         cursor.execute("""
-            INSERT INTO t_Equipo_Torneo (eqtn_equipo, eqtn_torneo, eqtn_estado)
-            VALUES (%s, %s, TRUE);
+            INSERT INTO t_Equipo_Torneo (eqtn_equipo, eqtn_torneo, eqtn_estado, eqtn_usua, eqtn_feccre)
+            VALUES (%s, %s, TRUE, USER, CURRENT_TIMESTAMP);
         """, (id_equipo, id_torneo))
         conn.commit()
         flash("Equipo registrado correctamente en el torneo.", "success")
@@ -167,6 +167,8 @@ def cambiar_estado_equipo_torneo(id_torneo, id_equipo):
         cursor.execute("""
             UPDATE t_Equipo_Torneo
             SET eqtn_estado = NOT eqtn_estado
+               ,eqtn_usua_alt = USER
+               ,eqtn_fecalt   = CURRENT_TIMESTAMP
             WHERE eqtn_torneo = %s AND eqtn_equipo = %s;
         """, (id_torneo, id_equipo))
         conn.commit()
@@ -187,6 +189,7 @@ def eliminar_equipo_torneo(id_torneo, id_equipo):
     cursor = conn.cursor()
 
     try:
+        # --- Validar jugadores asociados ---
         cursor.execute("""
             SELECT COUNT(*) 
             FROM t_Jugador_Torneo
@@ -200,15 +203,34 @@ def eliminar_equipo_torneo(id_torneo, id_equipo):
             conn.close()
             return redirect(url_for('equipo_torneo.listar_equipos_torneo', id_torneo=id_torneo))
 
+        # --- Validar partidos asociados ---
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM t_Partidos
+            WHERE prtd_trno = %s
+              AND (prtd_local = %s OR prtd_visitante = %s);
+        """, (id_torneo, id_equipo, id_equipo))
+        partidos_asociados = cursor.fetchone()[0]
+
+        if partidos_asociados > 0:
+            flash("El equipo que trató de eliminar tiene partidos asociados.", "error")
+            cursor.close()
+            conn.close()
+            return redirect(url_for('equipo_torneo.listar_equipos_torneo', id_torneo=id_torneo))
+
+        # --- Eliminar equipo del torneo ---
         cursor.execute("""
             DELETE FROM t_Equipo_Torneo
             WHERE eqtn_torneo = %s AND eqtn_equipo = %s;
         """, (id_torneo, id_equipo))
+
         conn.commit()
         flash("Equipo eliminado del torneo correctamente.", "success")
+
     except Exception as e:
         conn.rollback()
         flash(f"Error al eliminar el equipo del torneo: {e}", "error")
+
     finally:
         cursor.close()
         conn.close()

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SportAuth</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+</head>
+<body>
+
+<div class="overlay">
+    <div class="container">
+        <h1 class="title">SportAuth</h1>
+
+        <div class="btn-group">
+            <a class="btn" href="{{ url_for('profesionalismos.listar_profesionalismos') }}">Profesionalismos</a>
+            <a class="btn" href="{{ url_for('jugadores.listar_jugadores') }}">Jugadores</a>
+            <a class="btn" href="{{ url_for('equipos.listar_equipos') }}">Equipos</a>
+            <a class="btn" href="{{ url_for('torneos.listar_torneos') }}">Torneos</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

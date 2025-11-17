@@ -28,7 +28,6 @@ def existe_equipo(nombre, id_excluir=None):
     conn.close()
     return existe
 
-# --- Página de formulario para crear equipos ---
 @equipos_bp.route('/equipos')
 def equipos():
     return render_template('form_equipo.html')
@@ -37,7 +36,6 @@ def equipos():
 @equipos_bp.route('/insertar_equipo', methods=['POST'])
 def insertar_equipo():
     nombre = request.form['nombre']
-    estado = request.form.get('estado') == 'on'
 
     if existe_equipo(nombre):
         flash(f"Ya existe un equipo con el nombre '{nombre}'.", "error")
@@ -48,11 +46,14 @@ def insertar_equipo():
 
     cursor.execute("""
         INSERT INTO t_Equipos (eqpo_nombre, eqpo_estado)
-        VALUES (%s, %s);
-    """, (nombre, estado))
+        VALUES (%s, TRUE);
+    """, (nombre,))
+    
     conn.commit()
     cursor.close()
     conn.close()
+
+    flash("Equipo registrado correctamente.", "success")
     return redirect(url_for('equipos.listar_equipos'))
 
 # --- Listar equipos ---

@@ -3,29 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <title>Registrar Equipo</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}">
 </head>
 <body>
-  <h1>Registrar nuevo equipo</h1>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        <div style="color: {% if category == 'error' %}red{% else %}green{% endif %}; font-weight:bold;">
-          {{ message }}
+
+<div class="overlay">
+
+  <div class="container form-container">
+
+    <h1 class="title">Registrar Equipo</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="messages">
+          {% for category, message in messages %}
+            <div class="msg {{ category }}">{{ message }}</div>
+          {% endfor %}
         </div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
+      {% endif %}
+    {% endwith %}
 
-  <form action="{{ url_for('equipos.insertar_equipo') }}" method="POST">
-    <label for="nombre">Nombre del equipo:</label>
-    <input type="text" id="nombre" name="nombre" required><br><br>
+    <form action="{{ url_for('equipos.insertar_equipo') }}" method="POST" class="form-box">
 
-    <label for="estado">Activo:</label>
-    <input type="checkbox" id="estado" name="estado" checked><br><br>
+      <label for="nombre">Nombre del equipo:</label>
+      <input type="text" id="nombre" name="nombre" required>
+      <button type="submit" class="btn form-btn">Guardar</button>
 
-    <button type="submit">Guardar</button>
-  </form>
+    </form>
 
-  <a href="{{ url_for('equipos.listar_equipos') }}">Ver lista de equipos</a>
+    <div class="buttons">
+      <a href="{{ url_for('equipos.listar_equipos') }}" class="btn secondary">Ver lista de equipos</a>
+    </div>
+
+  </div>
+
+</div>
+
 </body>
 </html>

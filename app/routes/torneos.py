@@ -25,7 +25,7 @@ def obtener_deportes_y_profesionalismos(deporte_id=1):
 
     return deportes, profesionalismos
 
-def validar_datos_torneo(min_eq, max_eq, min_jug, max_jug, genero, fecini, fecfin, profesionalismos, estado=None, equipos_actuales=None):
+def validar_datos_torneo(min_eq, max_eq, min_jug, max_jug, genero, fecini, fecfin, profesionalismos, estado=None, equipos_actuales=None, jugadores_cancha=None):
     """
     Verifica las reglas de negocio según los constraints de la tabla t_Torneo.
     Devuelve una lista de mensajes de error (vacía si todo está correcto).
@@ -39,8 +39,8 @@ def validar_datos_torneo(min_eq, max_eq, min_jug, max_jug, genero, fecini, fecfi
         errores.append("El número máximo de jugadores no puede ser menor que el mínimo.")
     if min_eq <= 0:
         errores.append("El número mínimo de equipos debe ser mayor que 0.")
-    if max_eq < min_eq:
-        errores.append("El número máximo de equipos no puede ser menor que el mínimo.")
+    if max_eq <= min_eq:
+        errores.append("El número máximo de equipos no puede ser menor o igual que el mínimo.")
 
     # --- Validación del género ---
     if genero not in ('M', 'F', None):
@@ -63,6 +63,18 @@ def validar_datos_torneo(min_eq, max_eq, min_jug, max_jug, genero, fecini, fecfi
     if not profesionalismos:
         errores.append("Debe asociar al menos un profesionalismo al torneo.")
         
+    if jugadores_cancha is None:
+        errores.append("Debe especificar la cantidad de jugadores en cancha.")
+    else:
+        try:
+            jugadores_cancha = int(jugadores_cancha)
+            if jugadores_cancha <= 0:
+                errores.append("El número de jugadores en cancha debe ser mayor que 0.")
+            if jugadores_cancha > min_jug:
+                errores.append("Los jugadores en cancha no pueden exceder el minimo de jugadores por equipo.")
+        except:
+            errores.append("Valor inválido para jugadores en cancha.")
+    
     if equipos_actuales is not None:
         try:
             equipos_actuales = int(equipos_actuales)
@@ -72,7 +84,11 @@ def validar_datos_torneo(min_eq, max_eq, min_jug, max_jug, genero, fecini, fecfi
                     f"no se puede reducir el número máximo de equipos."
                 )
         except (ValueError, TypeError):
-            errores.append("Error al verificar los equipos asociados al torneo.")    
+            errores.append("Error al verificar los equipos asociados al torneo.")   
+             
+    if estado == 'E' and equipos_actuales is not None:
+        if equipos_actuales < min_eq:
+            errores.append("No se cumple con el mínimo de equipos registrados.")
     return errores
 
 def validar_eliminacion_torneo(cursor, id_torneo):
@@ -102,9 +118,15 @@ def insertar_torneo():
     fecini = request.form['fecini']
     fecfin = request.form['fecfin']
     deporte = request.form['deporte']
+    jugadores_cancha = int(request.form['jugadores_cancha'])
     profesionalismos = request.form.getlist('profesionalismos')
     
-    errores = validar_datos_torneo(min_eq, max_eq, min_jug, max_jug, genero, fecini, fecfin, profesionalismos)
+    try:
+        profesionalismos_selected = [int(p) for p in profesionalismos]
+    except ValueError:
+        profesionalismos_selected = []  # en caso de valores inesperados
+
+    errores = validar_datos_torneo(min_eq, max_eq, min_jug, max_jug, genero, fecini, fecfin, profesionalismos, jugadores_cancha=jugadores_cancha)
 
     if errores:
         deportes, profesionalismos_data = obtener_deportes_y_profesionalismos()
@@ -112,11 +134,21 @@ def insertar_torneo():
             flash(err, "error")
         return render_template(
             'form_torneo.html',
-            nombre=nombre, min_equipos=min_eq, max_equipos=max_eq,
-            min_jugadores=min_jug, max_jugadores=max_jug,
-            genero=genero, fecini=fecini, fecfin=fecfin,
-            deportes=deportes, profesionalismos=profesionalismos_data
+            nombre=nombre,
+            min_equipos=min_eq,
+            max_equipos=max_eq,
+            min_jugadores=min_jug,
+            max_jugadores=max_jug,
+            jugadores_cancha=jugadores_cancha,
+            genero=genero,
+            fecini=fecini,
+            fecfin=fecfin,
+            deporte=deporte,
+            profesionalismos_seleccionados=profesionalismos_selected,
+            deportes=deportes,
+            profesionalismos=profesionalismos_data
         )
+
 
     conn = get_connection()
     cursor = conn.cursor()
@@ -126,11 +158,13 @@ def insertar_torneo():
             INSERT INTO t_torneo (
                 trno_nombre, trno_min_equipos, trno_max_equipos,
                 trno_min_jugadores, trno_max_jugadores, trno_genero,
-                trno_fecini, trno_fecfin, trno_dprt, trno_estado
+                trno_fecini, trno_fecfin, trno_dprt, trno_estado,
+                trno_jugadores_cancha
             )
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
             RETURNING trno_trno;
-        """, (nombre, min_eq, max_eq, min_jug, max_jug, genero, fecini, fecfin, deporte, 'P'))
+        """, (nombre, min_eq, max_eq, min_jug, max_jug, genero,
+              fecini, fecfin, deporte, 'P', jugadores_cancha))
 
         id_torneo = cursor.fetchone()[0]
 
@@ -193,7 +227,7 @@ def editar_torneo(id):
     cursor.execute("""
         SELECT trno_trno, trno_nombre, trno_min_equipos, trno_max_equipos,
                trno_min_jugadores, trno_max_jugadores, trno_genero,
-               trno_fecini, trno_fecfin, trno_dprt, trno_estado
+               trno_fecini, trno_fecfin, trno_dprt, trno_estado, trno_jugadores_cancha
         FROM t_torneo
         WHERE trno_trno = %s;
     """, (id,))
@@ -236,12 +270,13 @@ def actualizar_torneo():
     fecfin = request.form['fecfin']
     deporte = request.form['deporte']
     estado = request.form['estado']
+    jugadores_cancha = int(request.form['jugadores_cancha'])
     profesionalismos = request.form.getlist('profesionalismos')
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM t_equipo_torneo WHERE eqtn_torneo = %s", (id_torneo,))
     equipos_actuales = cursor.fetchone()[0]
-    errores = validar_datos_torneo(min_eq, max_eq, min_jug, max_jug, genero, fecini, fecfin, profesionalismos, estado, equipos_actuales)
+    errores = validar_datos_torneo(min_eq, max_eq, min_jug, max_jug, genero, fecini, fecfin, profesionalismos, estado, equipos_actuales, jugadores_cancha)
 
     if errores:
         cursor.close()
@@ -263,11 +298,12 @@ def actualizar_torneo():
                 trno_fecfin = %s,
                 trno_dprt = %s,
                 trno_estado = %s,
+                trno_jugadores_cancha = %s,
                 trno_usua_alt = USER,
                 trno_fecalt = CURRENT_TIMESTAMP
             WHERE trno_trno = %s;
         """, (nombre, min_eq, max_eq, min_jug, max_jug, genero,
-              fecini, fecfin, deporte, estado, id_torneo))
+              fecini, fecfin, deporte, estado, jugadores_cancha, id_torneo))
 
         cursor.execute("DELETE FROM t_profesionalismo_torneo WHERE prtn_torneo = %s;", (id_torneo,))
         for prfm in profesionalismos:

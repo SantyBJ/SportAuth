@@ -10,13 +10,9 @@ def listar_jugadores():
     cursor = conn.cursor()
     cursor.execute("""
         SELECT j.jgdr_jgdr, j.jgdr_nombres, j.jgdr_apelidos,
-               CASE j.jgdr_genero 
-			     WHEN 'M' THEN 'Masculino'
-				 WHEN 'F' THEN 'Femenino'
-				 ELSE 'Indefinindo - ' || j.jgdr_genero
-			   END jgdr_genero,
+               j.jgdr_genero,
                p.prfm_descri, 
-               CASE WHEN j.jgdr_estado THEN 'Activo' ELSE 'Inactivo' END AS estado
+               CASE WHEN j.jgdr_estado THEN 'Act.' ELSE 'Inactivo' END AS estado
         FROM t_jugadores j
         JOIN t_profesionalismo p ON p.prfm_prfm = j.jgdr_prfm
         ORDER BY j.jgdr_apelidos, j.jgdr_nombres;
@@ -124,7 +120,7 @@ def actualizar_jugador():
     apellidos = request.form['apellidos']
     genero = request.form['genero']
     profesionalismo = request.form['profesionalismo']
-    estado = request.form['estado'] == 'True'
+    estado = "estado" in request.form
 
     conn = get_connection()
     cursor = conn.cursor()

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Jugadores por Partido</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/registros.css') }}">
+</head>
+<body>
+
+<div class="overlay">
+
+  <div class="container">
+
+    <h1 class="title">Jugadores por Partido</h1>
+
+    <!-- MENSAJES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="messages">
+          {% for category, message in messages %}
+            <div class="msg {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- INFO DEL PARTIDO -->
+    <div class="info-card">
+
+      <h2>Información del Partido</h2>
+
+      <div class="info-grid">
+
+        <div>
+          <p><strong>{{ local.nombre }}</strong> vs <strong>{{ visitante.nombre }}</strong></p>
+          <p><strong>Torneo:</strong> {{ id_torneo }} — <strong>Partido:</strong> {{ id_partido }}</p>
+        </div>
+
+        <div>
+          <p><strong>Fecha y hora:</strong> {{ partido[2] }}</p>
+
+          <p>
+            <strong>Estado:</strong>
+            {% if prtd_estado == 'P' %}
+              <span class="badge badge-blue">Programado</span>
+            {% elif prtd_estado == 'E' %}
+              <span class="badge badge-yellow">En ejecución</span>
+            {% else %}
+              <span class="badge badge-red">Finalizado</span>
+            {% endif %}
+          </p>
+
+        </div>
+      </div>
+
+      <p style="font-size:20px; margin-top:10px;">
+        <strong>Resultado:</strong> {{ goles_local }} - {{ goles_visitante }}
+      </p>
+
+      <div class="botones-partido" style="margin-top:20px; display:flex; gap:15px;">
+
+        {% if prtd_estado == 'P' %}
+          <a href="{{ url_for('registros.iniciar_partido', id_torneo=id_torneo, id_partido=id_partido) }}"
+             class="btn sport-green">Iniciar partido</a>
+
+        {% elif prtd_estado == 'E' %}
+          <a href="{{ url_for('registros.finalizar_partido', id_torneo=id_torneo, id_partido=id_partido) }}"
+             class="btn sport-red">Finalizar partido</a>
+        {% endif %}
+
+        <a href="{{ url_for('partidos.listar_partidos', id_torneo=id_torneo) }}" class="btn secondary">
+          Volver a partidos
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <div class="form-card">
+
+      <legend class="legend-title">Registrar Jugador</legend>
+
+      {% if prtd_estado != 'P' %}
+        <p>No es posible agregar jugadores: el partido no está en estado Programado.</p>
+
+      {% else %}
+        <form method="POST" class="form-box"
+              action="{{ url_for('registros.insertar_registro', id_torneo=id_torneo, id_partido=id_partido) }}">
+
+          <label for="cedula">Cédula del jugador:</label>
+          <input type="number" name="cedula" required
+                 class="table-input"
+                 placeholder="Ingrese la cédula del jugador">
+
+          <button type="submit" class="btn sport-green form-btn">Registrar jugador</button>
+        </form>
+      {% endif %}
+
+    </div>
+
+    <legend class="legend-title">Jugadores Registrados</legend><br>
+
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Cédula</th>
+          <th>Nombre</th>
+          <th>Equipo</th>
+          <th>Camiseta</th>
+          <th>Estado</th>
+          <th>Goles</th>
+          <th>Asist.</th>
+          <th>Faltas</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        {% for r in registros %}
+        <tr>
+          <td>{{ r.jugador }}</td>
+          <td>{{ r.nombre }}</td>
+
+          <td>
+            {% if r.equipo == local.id %}
+              {{ local.nombre }}
+            {% else %}
+              {{ visitante.nombre }}
+            {% endif %}
+          </td>
+
+          <td>{{ r.camiseta }}</td>
+          <td>{{ r.estado }}</td>
+
+          <td>{{ r.goles }}</td>
+          <td>{{ r.asistencias }}</td>
+
+          <!-- FALTAS -->
+          <td>
+            <div class="faltas-box">
+              <div class="falta-item verde">L: {{ r.faltas_leves }}</div>
+              <div class="falta-item amarillo">M: {{ r.faltas_medias }}</div>
+              <div class="falta-item rojo">G: {{ r.faltas_graves }}</div>
+            </div>
+          </td>
+
+          <td class="acciones-torneo">
+                    
+              {% if prtd_estado == 'P' %}
+                    
+                  <form method="POST"
+                        action="{{ url_for('registros.actualizar_registro', id_torneo=id_torneo, id_partido=id_partido) }}">
+                      <input type="hidden" name="jugador" value="{{ r.jugador }}">
+                    
+                      {% if r.estado == 'Jugando' %}
+                        <input type="hidden" name="estado" value="B">
+                        <button class="btn-action warning fullwidth">Banca</button>
+                      {% else %}
+                        <input type="hidden" name="estado" value="J">
+                        <button class="btn-action sport-green fullwidth">Jugar</button>
+                      {% endif %}
+                  </form>
+                
+                  <a href="{{ url_for('registros.eliminar_registro', id_torneo=id_torneo, id_partido=id_partido, jugador=r.jugador) }}"
+                     class="btn-action sport-red fullwidth"
+                     onclick="return confirm('¿Eliminar registro?');">
+                    Eliminar
+                  </a>
+                
+              {% elif prtd_estado == 'E' %}
+                
+                  {% if r.estado == 'Jugando' %}
+                
+                      <div class="counter-box">
+                          <form method="POST" action="{{ url_for('registros.evento_gol', id_torneo=id_torneo, id_partido=id_partido) }}">
+                              <input type="hidden" name="jugador" value="{{ r.jugador }}">
+                              <input type="hidden" name="registro" value="-1">
+                              <button class="counter-btn">−</button>
+                          </form>
+                        
+                          <span class="counter-value">gol</span>
+                        
+                          <form method="POST" action="{{ url_for('registros.evento_gol', id_torneo=id_torneo, id_partido=id_partido) }}">
+                              <input type="hidden" name="jugador" value="{{ r.jugador }}">
+                              <input type="hidden" name="registro" value="1">
+                              <button class="counter-btn">+</button>
+                          </form>
+                      </div>
+
+                      <!-- ASISTENCIAS -->
+                      <div class="counter-box">
+                          <form method="POST" action="{{ url_for('registros.evento_asistencia', id_torneo=id_torneo, id_partido=id_partido) }}">
+                              <input type="hidden" name="jugador" value="{{ r.jugador }}">
+                              <input type="hidden" name="registro" value="-1">
+                              <button class="counter-btn">−</button>
+                          </form>
+                        
+                          <span class="counter-value">asist.  </span>
+                        
+                          <form method="POST" action="{{ url_for('registros.evento_asistencia', id_torneo=id_torneo, id_partido=id_partido) }}">
+                              <input type="hidden" name="jugador" value="{{ r.jugador }}">
+                              <input type="hidden" name="registro" value="1">
+                              <button class="counter-btn">+</button>
+                          </form>
+                      </div>
+
+                      <form method="POST" action="{{ url_for('registros.evento_lesion', id_torneo=id_torneo, id_partido=id_partido) }}">
+                        <input type="hidden" name="jugador" value="{{ r.jugador }}">
+                        <button class="btn-action sport-red fullwidth">Lesión</button>
+                      </form>
+                    
+                      <form method="POST" action="{{ url_for('registros.evento_falta', id_torneo=id_torneo, id_partido=id_partido) }}">
+                        <input type="hidden" name="jugador" value="{{ r.jugador }}">
+                        <select name="tipo" class="table-select">
+                          <option value="L">Leve</option>
+                          <option value="M">Media</option>
+                          <option value="G">Grave</option>
+                        </select>
+                        <button class="btn-action sport-purple fullwidth">Falta</button>
+                      </form>
+                  {% else %}
+                      <div class="no-actions">
+                          <span>Jugador sin acciones</span>
+                      </div>
+                  {% endif %}
+                    
+              {% else %}
+                  <div class="no-actions">
+                      <span>Sin acciones</span>
+                  </div>
+              {% endif %}
+                
+          </td>
+
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+
+    {% if prtd_estado == 'E' %}
+    <div class="form-card sub-box">
+      <legend class="legend-title">Sustitución</legend>
+
+      <form method="POST" class="form-box"
+            action="{{ url_for('registros.evento_sustitucion', id_torneo=id_torneo, id_partido=id_partido) }}">
+
+        <label>Jugador que sale:</label>
+        <input name="jugador_sale" class="table-input" required>
+
+        <label>Jugador que entra:</label>
+        <input name="jugador_entra" class="table-input" required>
+
+        <button class="btn sport-blue form-btn">Realizar sustitución</button>
+      </form>
+    </div>
+    {% endif %}
+
+  </div>
+
+</div>
+
+</body>
+</html>

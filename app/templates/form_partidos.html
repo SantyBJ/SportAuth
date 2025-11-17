@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar Partido</title>
+
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}">
+</head>
+
+<body>
+
+<div class="overlay">
+
+  <div class="container">
+
+    <h1 class="title">Registrar Partido</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="messages">
+        {% for category, message in messages %}
+          <div class="msg {{ category }}">{{ message }}</div>
+        {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form class="form-box"
+          action="{{ url_for('partidos.insertar_partido', id_torneo=id_torneo) }}"
+          method="post">
+
+      <label>Equipo Local:</label>
+      <select name="local" required>
+        {% for e in equipos %}
+          <option value="{{ e[0] }}">{{ e[1] }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Equipo Visitante:</label>
+      <select name="visitante" required>
+        {% for e in equipos %}
+          <option value="{{ e[0] }}">{{ e[1] }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Fecha del partido:</label>
+      <input type="datetime-local" name="fecha" class="datetime-input" required>
+
+      <button type="submit" class="btn form-btn">Guardar</button>
+    </form>
+
+    <div class="buttons">
+      <a href="{{ url_for('partidos.listar_partidos', id_torneo=id_torneo) }}"
+         class="btn secondary">
+        Volver a la Lista
+      </a>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

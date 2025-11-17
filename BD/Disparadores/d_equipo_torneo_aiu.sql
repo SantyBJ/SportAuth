@@ -10,6 +10,18 @@ CREATE OR REPLACE FUNCTION df_equipo_torneo_aiu()
 AS $BODY$
 BEGIN
     --
+    IF TG_OP = 'INSERT' THEN
+        --
+        NEW.eqtn_usua   := COALESCE(NEW.eqtn_usua, USER);
+        NEW.eqtn_feccre := COALESCE(NEW.eqtn_feccre, CURRENT_TIMESTAMP);
+        --
+    ELSE
+        --
+        NEW.eqtn_usua_alt := COALESCE(NEW.eqtn_usua_alt, USER);
+        NEW.eqtn_fecalt   := COALESCE(NEW.eqtn_fecalt, CURRENT_TIMESTAMP);
+        --
+    END IF;
+    --
     IF NOT NEW.eqtn_estado THEN
         --
         UPDATE t_jugador_Torneo

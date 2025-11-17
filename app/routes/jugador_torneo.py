@@ -4,15 +4,11 @@ from database import get_connection
 jugador_torneo_bp = Blueprint('jugador_torneo', __name__)
 
 def validar_asociacion_jugador_torneo(cursor, id_torneo, cedula, equipo, nro_camiseta, modo="insertar"):
-    """
-    Realiza todas las validaciones necesarias antes de asociar o actualizar un jugador en un torneo.
-    Retorna una lista de mensajes de error (vacía si todo está correcto).
-    """
     errores = []
 
     # --- Validar torneo ---
     cursor.execute("""
-        SELECT trno_estado, trno_dprt, trno_genero
+        SELECT trno_estado, trno_dprt, trno_genero, trno_max_jugadores, trno_max_equipos
         FROM t_torneo 
         WHERE trno_trno = %s;
     """, (id_torneo,))
@@ -21,11 +17,59 @@ def validar_asociacion_jugador_torneo(cursor, id_torneo, cedula, equipo, nro_cam
         errores.append("El torneo especificado no existe.")
         return errores
 
-    trno_estado, deporte_torneo, genero_torneo = torneo_info
+    trno_estado, deporte_torneo, genero_torneo, max_jugadores, max_equipos = torneo_info
 
     if trno_estado == 'F':
         errores.append("No se pueden asociar o modificar jugadores porque el torneo ya se encuentra finalizado.")
 
+    # --- Validación límite máximo ---
+    limite_total = max_jugadores * max_equipos
+
+    cursor.execute("""
+        SELECT COUNT(*) FROM t_jugador_torneo WHERE jgtr_torneo = %s;
+    """, (id_torneo,))
+    jugadores_actuales = cursor.fetchone()[0]
+
+    if modo == "insertar" and jugadores_actuales >= limite_total:
+        errores.append(
+            f"Se alcanzó el límite máximo de jugadores para este torneo ({limite_total})."
+        )
+
+    cursor.execute("""
+        SELECT COUNT(*) 
+        FROM t_jugador_torneo 
+        WHERE jgtr_torneo = %s AND jgtr_equipo = %s;
+    """, (id_torneo, equipo))
+    jugadores_en_equipo = cursor.fetchone()[0]
+
+    # En actualización, excluirse a sí mismo
+    if modo == "actualizar":
+        cursor.execute("""
+            SELECT COUNT(*) 
+            FROM t_jugador_torneo
+            WHERE jgtr_torneo = %s AND jgtr_equipo = %s AND jgtr_jugador <> %s;
+        """, (id_torneo, equipo, cedula))
+        jugadores_en_equipo = cursor.fetchone()[0]
+
+    if jugadores_en_equipo >= max_jugadores and modo == "insertar":
+        errores.append(
+            f"El equipo seleccionado ya alcanzó el máximo permitido de jugadores ({max_jugadores})."
+        )
+
+    if modo == "actualizar":
+        cursor.execute("""
+            SELECT jgtr_equipo 
+            FROM t_jugador_torneo
+            WHERE jgtr_torneo = %s AND jgtr_jugador = %s;
+        """, (id_torneo, cedula))
+        equipo_actual = cursor.fetchone()[0]
+
+        # Solo validar límite por equipo si está cambiando de equipo o aumentando el cupo
+        if equipo_actual != equipo and jugadores_en_equipo >= max_jugadores:
+            errores.append(
+                f"El equipo seleccionado ya alcanzó el máximo permitido de jugadores ({max_jugadores})."
+            )
+    # --- Validar jugador ---
     cursor.execute("""
         SELECT jgdr_estado, jgdr_genero, jgdr_prfm,
                (SELECT prfm_dprt FROM t_profesionalismo WHERE prfm_prfm = jgdr_prfm)
@@ -57,7 +101,7 @@ def validar_asociacion_jugador_torneo(cursor, id_torneo, cedula, equipo, nro_cam
 
     # --- Validar género ---
     if genero_torneo is not None and genero_torneo != genero_jugador:
-        errores.append("El género del jugador no coincide con el género permitido por el torneo.")
+        errores.append("El género del jugador no coincide con el permitido por el torneo.")
 
     # --- Validar equipo activo ---
     cursor.execute("SELECT eqpo_estado FROM t_equipos WHERE eqpo_eqpo = %s;", (equipo,))
@@ -85,7 +129,7 @@ def validar_asociacion_jugador_torneo(cursor, id_torneo, cedula, equipo, nro_cam
         if cursor.fetchone()[0] > 0:
             errores.append("El jugador ya está asociado a este torneo.")
 
-    # --- Validar número de camiseta duplicado dentro del mismo equipo ---
+    # --- Validar número de camiseta duplicado ---
     cursor.execute("""
         SELECT COUNT(*) 
         FROM t_jugador_torneo 
@@ -206,6 +250,18 @@ def eliminar_jugador_torneo(jugador, id_torneo):
     conn = get_connection()
     cursor = conn.cursor()
     try:
+        cursor.execute("""
+            SELECT COUNT(*)
+            FROM t_registros
+            WHERE rgtr_torneo = %s
+              AND rgtr_jugador = %s;
+        """, (id_torneo, jugador))
+        registros = cursor.fetchone()[0]
+
+        if registros > 0:
+            flash("Este jugador tiene registros en el torneo y no puede ser eliminado.", "error")
+            return redirect(url_for('jugador_torneo.jugadores_por_torneo', id_torneo=id_torneo))
+        
         cursor.execute("""
             DELETE FROM t_jugador_torneo
             WHERE jgtr_jugador = %s AND jgtr_torneo = %s;

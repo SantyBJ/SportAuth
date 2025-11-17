@@ -1,0 +1,532 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: url("../img/fondo_futbol.jpg") center/cover no-repeat fixed;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: white;
+}
+
+.overlay {
+    background-color: rgba(0, 0, 0, 0.55);
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.container {
+    background-color: rgba(0,0,0,0.55);
+    padding: 40px;
+    border-radius: 20px;
+    width: 850px;
+    backdrop-filter: blur(5px);
+}
+
+.title {
+    text-align: center;
+    font-size: 40px;
+    font-weight: 900;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #ffffff;
+    text-shadow: 0 0 10px black;
+}
+
+.messages {
+    margin-bottom: 20px;
+}
+
+.msg {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.msg.error {
+    background-color: rgba(255, 0, 0, 0.8);
+}
+
+.msg.success {
+    background-color: rgba(0, 150, 50, 0.8);
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 18px;
+    background-color: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.styled-table thead {
+    background-color: rgba(0,148,50,0.9);
+}
+
+.styled-table th {
+    padding: 12px;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+}
+
+.styled-table td {
+    padding: 12px;
+    text-align: center;
+    color: white;
+}
+
+.styled-table tr:nth-child(even) {
+    background-color: rgba(255,255,255,0.08);
+}
+
+.styled-table tr:hover {
+    background-color: rgba(0,148,50,0.4);
+    transition: 0.3s;
+}
+
+.btn-action {
+    padding: 8px 12px;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-action.edit {
+    background-color: #009432;
+}
+
+.btn-action.edit:hover {
+    background-color: #007a29;
+}
+
+.btn-action.delete {
+    background-color: #d63031;
+}
+
+.btn-action.delete:hover {
+    background-color: #b71c1c;
+}
+
+/* Botones inferiores */
+.buttons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.btn {
+    padding: 15px 25px;
+    background-color: #009432;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    transition: 0.3s;
+    border: 2px solid white;
+}
+
+.btn:hover {
+    background-color: #006f25;
+    transform: scale(1.05);
+}
+
+.btn.secondary {
+    background-color: #0984e3;
+}
+
+.btn.secondary:hover {
+    background-color: #086fbd;
+}
+
+.form-container {
+    width: 600px;
+}
+
+.form-box {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-box label {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.form-box input[type="text"],
+.form-box select {
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    outline: none;
+}
+
+.form-btn {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.buttons {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+}
+
+.styled-table td.acciones {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.styled-table {
+    background-color: rgba(0,0,0,0.35) !important;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.styled-table thead {
+    background-color: rgba(0,148,50,1) !important;
+}
+
+.styled-table td {
+    text-align: center;
+}
+
+.container .buttons {
+    margin-bottom: 20px;
+}
+
+.btn-action.delete {
+    padding: 6px 10px !important;
+}
+
+.btn-action.edit {
+    padding: 6px 10px !important;
+}
+
+.form-box input[type="number"] {
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    outline: none;
+}
+
+.form-box input[type="number"]::-webkit-outer-spin-button,
+.form-box input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* ==== SWITCH ACTIVO/INACTIVO ==== */
+.switch-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.switch {
+    position: relative;
+    width: 60px;
+    height: 30px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #b71c1c;
+    transition: .3s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 23px;
+    width: 23px;
+    left: 4px;
+    bottom: 3.5px;
+    background-color: white;
+    border-radius: 50%;
+    transition: .3s;
+}
+
+.switch input:checked + .slider {
+    background-color: #009432;
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(29px);
+}
+
+.switch-label {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* ==== BOTONES ESPECIALES DE TORNEOS ==== */
+
+.btn-action.info {
+    background-color: #0984e3;
+}
+.btn-action.info:hover {
+    background-color: #086fbd;
+}
+
+.btn-action.success {
+    background-color: #00b894;
+}
+.btn-action.success:hover {
+    background-color: #009874;
+}
+
+.btn-action.purple {
+    background-color: #6c5ce7;
+}
+.btn-action.purple:hover {
+    background-color: #574bce;
+}
+
+/* ==== ESTILO PARA ACCIONES DE TORNEO ==== */
+.acciones-torneo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Altura uniforme y buen rendimiento */
+.acciones-torneo a.btn-action {
+    width: 110px;
+    text-align: center;
+    padding: 8px 10px !important;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+/* ==== COLORES DEPORTIVOS ==== */
+.sport-green {
+    background-color: #1dd158;
+}
+.sport-green:hover {
+    background-color: #14a345;
+}
+
+.sport-red {
+    background-color: #ff4757;
+}
+.sport-red:hover {
+    background-color: #d63031;
+}
+
+.sport-blue {
+    background-color: #1e90ff;
+}
+.sport-blue:hover {
+    background-color: #1876d4;
+}
+
+.sport-yellow {
+    background-color: #f1c40f;
+    color: black !important;
+}
+.sport-yellow:hover {
+    background-color: #d4ab0d;
+}
+
+.sport-purple {
+    background-color: #9b59b6;
+}
+.sport-purple:hover {
+    background-color: #884ea0;
+}
+
+/* Fieldset más bonito */
+.form-fieldset {
+    border: 2px solid rgba(255,255,255,0.3);
+    padding: 15px 20px;
+    border-radius: 12px;
+}
+
+.form-fieldset legend {
+    font-size: 20px;
+    font-weight: bold;
+    padding: 0 8px;
+}
+
+.checkbox-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
+}
+
+.form-box input[type="date"],
+.form-box select {
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    outline: none;
+}
+
+/* ==== CAMPOS DENTRO DE TABLAS (equipo, camiseta, estado) ==== */
+.table-input,
+.table-select {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-size: 16px;
+    width: 100%;
+    outline: none;
+    backdrop-filter: blur(2px);
+    transition: 0.2s;
+}
+
+.table-input:disabled,
+.table-select:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.table-input:focus,
+.table-select:focus {
+    background: rgba(255,255,255,0.25);
+}
+
+.styled-table td select,
+.styled-table td input[type="number"] {
+    width: 100%;
+}
+
+.styled-table td {
+    padding: 10px 14px !important;
+}
+
+.table-switch {
+    display: flex;
+    justify-content: center;
+}
+
+/* ==== ACCIONES EN TABLA DE JUGADORES – BOTONES ESTANDARIZADOS ==== */
+.acciones-jugador {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.acciones-jugador .btn-action,
+.acciones-jugador .btn-action:visited {
+    width: 110px;
+    padding: 8px 0 !important;
+    text-align: center;
+    line-height: 18px !important;
+    font-size: 15px !important;
+    box-sizing: border-box !important;
+}
+
+.btn-action.cancel {
+    background-color: #b2bec3;
+    color: black;
+}
+
+.btn-action.cancel:hover {
+    background-color: #9099a0;
+}
+
+td input[name="nro_camiseta"],
+td .table-input[name="nro_camiseta"] {
+    width: 70px !important;
+}
+
+.table-select option {
+    color: black !important;
+    background-color: white !important;
+}
+
+.styled-table td:nth-child(1),
+.styled-table th:nth-child(1) {
+    width: 10px !important;
+}
+
+.styled-table td:nth-child(2),
+.styled-table th:nth-child(2) {
+    width: 240px !important;
+}
+
+.styled-table td:nth-child(3),
+.styled-table th:nth-child(3) {
+    width: 190px !important;
+}
+
+.datetime-input {
+    padding: 14px 18px;
+    border-radius: 10px;
+    border: 2px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-size: 17px;
+    outline: none;
+    transition: 0.25s;
+    backdrop-filter: blur(3px);
+}
+
+.datetime-input::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+    opacity: 0.9;
+}
+
+.datetime-input:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+.datetime-input:focus {
+    background: rgba(255,255,255,0.3);
+    border-color: #1dd158;
+    box-shadow: 0 0 8px rgba(0,255,100,0.6);
+}
+
+/* ==== CENTRAR BOTONES DE ACCIONES (FORZADO) ==== */
+table.styled-table tbody td.acciones {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+td.acciones a.btn-action {
+    display: inline-block !important;
+}
+

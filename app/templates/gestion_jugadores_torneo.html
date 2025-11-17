@@ -3,153 +3,193 @@
 <head>
   <meta charset="UTF-8">
   <title>Gestión de Jugadores en Torneo</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f8f9fa;
-      margin: 30px;
-    }
-
-    h1, h2 {
-      color: #333;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
-    }
-
-    th {
-      background: #007bff;
-      color: white;
-    }
-
-    input, select {
-      padding: 4px;
-    }
-
-    .btn {
-      padding: 5px 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .btn-insertar { background: #28a745; color: white; }
-    .btn-guardar { background: #17a2b8; color: white; }
-    .btn-editar { background: #ffc107; color: black; }
-    .btn-eliminar { background: #dc3545; color: white; }
-
-    .flash {
-      font-weight: bold;
-      margin-bottom: 15px;
-    }
-    .flash.error { color: red; }
-    .flash.success { color: green; }
-  </style>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}">
 </head>
+
 <body>
-  <h1>Gestión de Jugadores en Torneo</h1>
-  <h2>Torneo: {{ torneo[1] }}</h2>
 
-  <!-- Mensajes flash -->
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        <div class="flash {{ category }}">{{ message }}</div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
+<div class="overlay">
 
-  <!-- Formulario para agregar jugador -->
-  <h3>Asociar nuevo jugador</h3>
-  <form method="POST" action="{{ url_for('jugador_torneo.insertar_jugador_torneo', id_torneo=torneo[0]) }}">
-    <label for="cedula">Cédula:</label>
-    <input type="number" name="cedula" required>
+  <div class="container">
 
-    <label for="equipo">Equipo:</label>
-    <select name="equipo" required>
-      <option value="">Seleccione...</option>
-      {% for eq in equipos %}
-        <option value="{{ eq[0] }}">{{ eq[1] }}</option>
-      {% endfor %}
-    </select>
+    <h1 class="title">Gestión de Jugadores en Torneo</h1>
 
-    <label for="nro_camiseta">N° Camiseta:</label>
-    <input type="number" name="nro_camiseta" min="1" required>
+    <div class="buttons">
+      <a href="{{ url_for('torneos.listar_torneos') }}" class="btn secondary">Volver a Torneos</a>
+    </div>
 
-    <button type="submit" class="btn btn-insertar">Asociar Jugador</button>
-  </form>
+    <h2 class="subtitle">Torneo: {{ torneo[1] }}</h2>
 
-  <!-- Tabla de jugadores -->
-  <h3>Jugadores asociados</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Cédula</th>
-        <th>Nombre</th>
-        <th>Equipo</th>
-        <th>N° Camiseta</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for j in jugadores %}
-      <tr id="row-{{ j[1] }}">
-        <form method="POST" action="{{ url_for('jugador_torneo.actualizar_jugador_torneo', id_torneo=torneo[0]) }}">
-          <input type="hidden" name="jugador" value="{{ j[1] }}">
+    <!-- MENSAJES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="messages">
+          {% for category, message in messages %}
+            <div class="msg {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
 
-          <td>{{ j[1] }}</td>
-          <td>{{ j[2] }}</td>
+    <!-- FORMULARIO PARA AGREGAR JUGADOR -->
+    <h2 class="subtitle">Asociar nuevo jugador</h2>
 
-          <td>
-            <select name="equipo" disabled>
-              {% for eq in equipos %}
-                <option value="{{ eq[0] }}" {% if eq[1] == j[3] %}selected{% endif %}>{{ eq[1] }}</option>
-              {% endfor %}
-            </select>
-          </td>
+    <form method="POST" action="{{ url_for('jugador_torneo.insertar_jugador_torneo', id_torneo=torneo[0]) }}" 
+          class="form-box" style="max-width:500px; margin:auto;">
 
-          <td><input type="number" name="nro_camiseta" value="{{ j[4] }}" disabled></td>
+      <label>Cédula:</label>
+      <input type="number" name="cedula" required>
 
-          <td>
-            <select name="estado" disabled>
-              <option value="1" {% if j[5] == 'Activo' %}selected{% endif %}>Activo</option>
-              <option value="0" {% if j[5] == 'Inactivo' %}selected{% endif %}>Inactivo</option>
-            </select>
-          </td>
+      <label>Equipo:</label>
+      <select name="equipo" required>
+        <option value="">Seleccione...</option>
+        {% for eq in equipos %}
+          <option value="{{ eq[0] }}">{{ eq[1] }}</option>
+        {% endfor %}
+      </select>
 
-          <td>
-            <button type="button" class="btn btn-editar" onclick="activarEdicion('{{ j[1] }}')">Editar</button>
-            <button type="submit" class="btn btn-guardar" id="guardar-{{ j[1] }}" style="display:none;">Guardar</button>
-            <a href="{{ url_for('jugador_torneo.eliminar_jugador_torneo', jugador=j[1], id_torneo=torneo[0]) }}" class="btn btn-eliminar" onclick="return confirm('¿Seguro que deseas eliminar esta asociación?')">Eliminar</a>
-          </td>
-        </form>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      <label>N° Camiseta:</label>
+      <input type="number" name="nro_camiseta" min="1" required>
 
-  <script>
-    function activarEdicion(jugadorId) {
-      const fila = document.getElementById('row-' + jugadorId);
-      const inputs = fila.querySelectorAll('input, select');
-      const botonGuardar = document.getElementById('guardar-' + jugadorId);
+      <button type="submit" class="btn form-btn sport-green">Asociar Jugador</button>
+    </form>
 
-      inputs.forEach(el => {
-        el.disabled = false;
-      });
+    <br><hr><br>
 
-      botonGuardar.style.display = 'inline-block';
-    }
-  </script>
+    <!-- TABLA DE JUGADORES -->
+    <h2 class="subtitle">Jugadores Asociados</h2>
+
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Cédula</th>
+          <th>Nombre</th>
+          <th>Equipo</th>
+          <th>N° Camiseta</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for j in jugadores %}
+        <tr id="row-{{ j[1] }}">
+
+          <form method="POST" action="{{ url_for('jugador_torneo.actualizar_jugador_torneo', id_torneo=torneo[0]) }}">
+            <input type="hidden" name="jugador" value="{{ j[1] }}">
+
+            <td>{{ j[1] }}</td>
+            <td>{{ j[2] }}</td>
+
+            <td>
+              <select name="equipo" class="table-select" disabled>
+                {% for eq in equipos %}
+                  <option value="{{ eq[0] }}" {% if eq[1] == j[3] %}selected{% endif %}>{{ eq[1] }}</option>
+                {% endfor %}
+              </select>
+            </td>
+
+            <td>
+              <input type="number" class="table-input" name="nro_camiseta" value="{{ j[4] }}" disabled>
+            </td>
+
+            <td>
+              <div class="switch-container table-switch">
+                  <label class="switch">
+                      <input type="checkbox"
+                             name="estado"
+                             value="1"
+                             {% if j[5] == 'Activo' %}checked{% endif %}
+                             disabled>
+                      <span class="slider"></span>
+                  </label>
+              </div>
+            </td>
+
+            <td class="acciones-jugador">     
+              <button type="button"
+                      class="btn-action sport-yellow"
+                      id="editar-{{ j[1] }}"
+                      onclick="activarEdicion('{{ j[1] }}')">
+                  Editar
+              </button>
+            
+              <button type="submit"
+                      class="btn-action sport-blue"
+                      id="guardar-{{ j[1] }}"
+                      style="display:none;">
+                  Guardar
+              </button>
+            
+              <button type="button"
+                      class="btn-action cancel"
+                      id="cancelar-{{ j[1] }}"
+                      style="display:none;"
+                      onclick="cancelarEdicion('{{ j[1] }}')">
+                  Cancelar
+              </button>
+            
+              <a href="{{ url_for('jugador_torneo.eliminar_jugador_torneo', jugador=j[1], id_torneo=torneo[0]) }}"
+                 onclick="return confirm('¿Seguro que deseas eliminar esta asociación?')"
+                 class="btn-action sport-red">
+                 Eliminar
+              </a>
+            </td>
+          </form>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+
+</div>
+
+<script>
+  const estadoOriginal = {};
+
+  function activarEdicion(jugadorId) {
+    const fila = document.getElementById('row-' + jugadorId);
+    const inputs = fila.querySelectorAll('input, select');
+
+    // Guardar valores originales
+    estadoOriginal[jugadorId] = {};
+    inputs.forEach(inp => {
+        estadoOriginal[jugadorId][inp.name] = inp.type === 'checkbox'
+            ? inp.checked
+            : inp.value;
+    });
+
+    inputs.forEach(i => i.disabled = false);
+
+    // Mostrar/ocultar botones
+    document.getElementById('guardar-' + jugadorId).style.display = "inline-block";
+    document.getElementById('cancelar-' + jugadorId).style.display = "inline-block";
+    document.getElementById('editar-' + jugadorId).style.display = "none";
+  }
+
+  function cancelarEdicion(jugadorId) {
+    const fila = document.getElementById('row-' + jugadorId);
+    const inputs = fila.querySelectorAll('input, select');
+
+    // Restaurar valores originales
+    inputs.forEach(inp => {
+        if (inp.type === "checkbox") {
+            inp.checked = estadoOriginal[jugadorId][inp.name];
+        } else {
+            inp.value = estadoOriginal[jugadorId][inp.name];
+        }
+        inp.disabled = true;
+    });
+
+    // Restaurar botones
+    document.getElementById('guardar-' + jugadorId).style.display = "none";
+    document.getElementById('cancelar-' + jugadorId).style.display = "none";
+    document.getElementById('editar-' + jugadorId).style.display = "inline-block";
+  }
+</script>
+
 </body>
 </html>
