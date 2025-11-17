@@ -1,1 +1,6 @@
-Flaskpsycopg2-binarypython-dotenvgunicorn
+Flask
+psycopg2-binary
+python-dotenv
+gunicorn
+numpy
+scikit-learn
