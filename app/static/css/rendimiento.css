@@ -1,0 +1,91 @@
+/* ==== CONTENEDOR ESPECIAL PARA RENDIMIENTOS ==== */
+
+.rend-container {
+    background-color: rgba(0, 0, 0, 0.55);
+    padding: 40px;
+    border-radius: 20px;
+    width: 1200px;
+    max-width: 95%;
+    backdrop-filter: blur(6px);
+}
+
+/* ===== TÍTULO DE PÁGINA ===== */
+
+.rend-title {
+    text-align: center;
+    font-size: 48px;
+    font-weight: 900;
+    margin-bottom: 35px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #ffffff;
+    text-shadow: 0 0 12px black;
+}
+
+/* ==== TABLA AMPLIA ==== */
+
+.rend-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 18px;
+    background-color: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.rend-table thead {
+    background-color: rgba(0,148,50,1);
+}
+
+.rend-table th,
+.rend-table td {
+    padding: 12px;
+    text-align: center;
+    color: white;
+}
+
+.rend-table tr:nth-child(even) {
+    background-color: rgba(255,255,255,0.08);
+}
+
+.rend-table tr:hover {
+    background-color: rgba(0,148,50,0.4);
+    transition: 0.3s;
+}
+
+/* Ajustes de columnas */
+.rend-table th:nth-child(1),
+.rend-table td:nth-child(1) {
+    width: 240px; /* Jugador */
+}
+
+.rend-table th:nth-child(2),
+.rend-table td:nth-child(2),
+.rend-table th:nth-child(3),
+.rend-table td:nth-child(3) {
+    width: 80px; /* Goles y Asistencias */
+}
+
+.rend-table th:nth-child(4),
+.rend-table td:nth-child(4) {
+    width: 130px; /* Faltas */
+}
+
+.rend-table th:nth-child(5),
+.rend-table td:nth-child(5),
+.rend-table th:nth-child(6),
+.rend-table td:nth-child(6),
+.rend-table th:nth-child(7),
+.rend-table td:nth-child(7),
+.rend-table th:nth-child(8),
+.rend-table td:nth-child(8) {
+    width: 110px;
+}
+
+/* ===== Botón Central ===== */
+
+.rend-buttons {
+    margin-top: 35px;
+    display: flex;
+    justify-content: center;
+}
