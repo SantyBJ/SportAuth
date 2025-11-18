@@ -94,12 +94,7 @@ def editar_jugador(id):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT jgdr_jgdr, jgdr_nombres, jgdr_apelidos,
-               CASE jgdr_genero 
-			     WHEN 'M' THEN 'Masculino'
-				 WHEN 'F' THEN 'Femenino'
-				 ELSE 'Indefinindo - ' || jgdr_genero
-			   END jgdr_genero, jgdr_prfm, jgdr_estado
+        SELECT jgdr_jgdr, jgdr_nombres, jgdr_apelidos, jgdr_genero, jgdr_prfm, jgdr_estado
         FROM t_jugadores
         WHERE jgdr_jgdr = %s;
     """, (id,))
