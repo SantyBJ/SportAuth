@@ -12,7 +12,7 @@ def listar_jugadores():
         SELECT j.jgdr_jgdr, j.jgdr_nombres, j.jgdr_apelidos,
                j.jgdr_genero,
                p.prfm_descri, 
-               CASE WHEN j.jgdr_estado THEN 'Act.' ELSE 'Inactivo' END AS estado
+               CASE WHEN j.jgdr_estado THEN 'A' ELSE 'I' END AS estado
         FROM t_jugadores j
         JOIN t_profesionalismo p ON p.prfm_prfm = j.jgdr_prfm
         ORDER BY j.jgdr_apelidos, j.jgdr_nombres;
