@@ -436,6 +436,7 @@ def iniciar_partido(id_torneo, id_partido):
             return redirect(url_for('registros.gestion_jugadores_partido',
                                     id_torneo=id_torneo, id_partido=id_partido))
         
+        # obtener info del torneo
         cursor.execute("""
             SELECT trno_estado,
                    trno_min_jugadores,
@@ -452,29 +453,56 @@ def iniciar_partido(id_torneo, id_partido):
 
         trno_estado, trno_min_jugadores, trno_jug_cancha = torneo
 
+        # validar estado del torneo
         if trno_estado != 'E':
             flash("El torneo no está en estado En ejecución.", "error")
             return redirect(url_for('registros.gestion_jugadores_partido',
                                     id_torneo=id_torneo, id_partido=id_partido))
-
+        
         cursor.execute("""
-            SELECT COUNT(*)
-            FROM t_Registros
-            WHERE rgtr_torneo = %s
-              AND rgtr_partido = %s
+            SELECT prtd_local, prtd_visitante
+            FROM t_partidos
+            WHERE prtd_trno = %s AND prtd_prtd = %s;
         """, (id_torneo, id_partido))
-        jugadores_registrados = cursor.fetchone()[0]
+        prtd_local, prtd_visitante = cursor.fetchone()
+        
+        cursor.execute("""
+            SELECT jt.jgtr_equipo, COUNT(*)
+            FROM t_registros r
+            JOIN t_jugador_torneo jt 
+              ON jt.jgtr_jugador = r.rgtr_jugador
+             AND jt.jgtr_torneo = r.rgtr_torneo
+           WHERE r.rgtr_torneo = %s
+             AND r.rgtr_partido = %s
+            GROUP BY jt.jgtr_equipo;
+        """, (id_torneo, id_partido))
 
-        if jugadores_registrados < trno_min_jugadores:
-            flash(f"No puede iniciar el partido: se requieren al menos "
-                  f"{trno_min_jugadores} jugadores registrados. "
-                  f"Actualmente hay {jugadores_registrados}.", "error")
+        conteo_registrados = {fila[0]: fila[1] for fila in cursor.fetchall()}
+
+        local_reg = conteo_registrados.get(prtd_local, 0)
+        visit_reg = conteo_registrados.get(prtd_visitante, 0)
+
+        if local_reg < trno_min_jugadores:
+            flash(
+                f"El equipo LOCAL debe tener al menos {trno_min_jugadores} jugadores "
+                f"registrados. Actualmente tiene {local_reg}.",
+                "error")
             return redirect(url_for('registros.gestion_jugadores_partido',
                                     id_torneo=id_torneo, id_partido=id_partido))
 
+        if visit_reg < trno_min_jugadores:
+            flash(
+                f"El equipo VISITANTE debe tener al menos {trno_min_jugadores} jugadores "
+                f"registrados. Actualmente tiene {visit_reg}.",
+                "error")
+            return redirect(url_for('registros.gestion_jugadores_partido',
+                                    id_torneo=id_torneo, id_partido=id_partido))
+        # ---------------------------------------
+        # VALIDACIÓN DE JUGADORES EN CANCHA
+        # ---------------------------------------
         cursor.execute("""
             SELECT jt.jgtr_equipo, COUNT(*)
-            FROM t_Registros r
+            FROM t_registros r
             JOIN t_jugador_torneo jt ON jt.jgtr_jugador = r.rgtr_jugador
                                      AND jt.jgtr_torneo = r.rgtr_torneo
             WHERE r.rgtr_torneo = %s
@@ -496,18 +524,23 @@ def iniciar_partido(id_torneo, id_partido):
         cant_visitante = jugadores_cancha.get(prtd_visitante, 0)
 
         if cant_local != trno_jug_cancha:
-            flash(f"El equipo local debe tener exactamente "
-                  f"{trno_jug_cancha} jugadores en cancha. Actual: {cant_local}.",
-                  "error")
+            flash(
+                f"El equipo local debe tener exactamente "
+        f"{trno_jug_cancha} jugadores en cancha. Actual: {cant_local}.",
+                "error"
+            )
             return redirect(url_for('registros.gestion_jugadores_partido',
                                     id_torneo=id_torneo, id_partido=id_partido))
 
         if cant_visitante != trno_jug_cancha:
-            flash(f"El equipo visitante debe tener exactamente "
-                  f"{trno_jug_cancha} jugadores en cancha. Actual: {cant_visitante}.",
-                  "error")
+            flash(
+                f"El equipo visitante debe tener exactamente "
+                f"{trno_jug_cancha} jugadores en cancha. Actual: {cant_visitante}.",
+                "error"
+            )
             return redirect(url_for('registros.gestion_jugadores_partido',
                                     id_torneo=id_torneo, id_partido=id_partido))
+
 
 
         # iniciar partido
