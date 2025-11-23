@@ -285,6 +285,52 @@ def actualizar_torneo():
             flash(err, "error")
         return redirect(url_for("torneos.editar_torneo", id=id_torneo))
 
+    cursor.execute("""
+        SELECT 
+            eq.eqpo_nombre AS equipo_nombre,
+            COUNT(*) AS cantidad_jugadores
+        FROM t_Registros r
+        JOIN t_Jugador_Torneo jt 
+            ON jt.jgtr_jugador = r.rgtr_jugador 
+            AND jt.jgtr_torneo = r.rgtr_torneo
+        JOIN t_Equipos eq
+            ON eq.eqpo_eqpo = jt.jgtr_equipo
+        WHERE r.rgtr_torneo = %s
+        GROUP BY r.rgtr_partido, eq.eqpo_eqpo, eq.eqpo_nombre;
+    """, (id_torneo,))
+    
+    jugadores_por_equipo = cursor.fetchall()  
+    cursor.execute("""
+        SELECT trno_min_jugadores, trno_max_jugadores
+        FROM t_torneo
+        WHERE trno_trno = %s;
+    """, (id_torneo,))
+    min_jug_actual, max_jug_actual = cursor.fetchone()
+    
+    if min_jug > min_jug_actual:
+        for equipo_nombre, cant in jugadores_por_equipo:
+            if cant < min_jug:
+                flash(
+                    f"No puede aumentar el mínimo de jugadores. "
+                    f"El equipo '{equipo_nombre}' tiene solo {cant} jugadores registrados.",
+                    "error"
+                )
+                cursor.close()
+                conn.close()
+                return redirect(url_for("torneos.editar_torneo", id=id_torneo))
+            
+    if max_jug < max_jug_actual:
+        for equipo_nombre, cant in jugadores_por_equipo:
+            if cant > max_jug:
+                flash(
+                    f"No puede reducir el máximo de jugadores. "
+                    f"El equipo '{equipo_nombre}' tiene {cant} jugadores registrados.",
+                    "error"
+                )
+                cursor.close()
+                conn.close()
+                return redirect(url_for("torneos.editar_torneo", id=id_torneo))
+    
     try:
         cursor.execute("""
             UPDATE t_torneo
