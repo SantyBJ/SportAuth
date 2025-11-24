@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Equipos por Torneo</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}">
+</head>
+<body>
+
+<div class="overlay">
+
+  <div class="container">
+
+    <h1 class="title">Gestión de Equipos del Torneo</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="messages">
+          {% for category, message in messages %}
+            <div class="msg {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <h2 class="subtitle">Datos del Torneo</h2>
+
+    <table class="styled-table">
+      <tbody>
+        <tr><th>ID</th><td>{{ torneo[0] }}</td></tr>
+        <tr><th>Nombre</th><td>{{ torneo[1] }}</td></tr>
+        <tr><th>Mínimo Equipos</th><td>{{ torneo[2] }}</td></tr>
+        <tr><th>Máximo Equipos</th><td>{{ torneo[3] }}</td></tr>
+        <tr><th>Estado</th><td>{{ torneo[4] }}</td></tr>
+      </tbody>
+    </table>
+
+    <br>
+
+    <h2 class="subtitle">Registro de Equipos en el Torneo</h2>
+    <p><strong>Total Equipos:</strong> {{ equipos|length }} / {{ torneo[3] }}</p>
+
+    {% if equipos|length < torneo[3] %}
+      <form action="{{ url_for('equipo_torneo.insertar_equipo_torneo') }}" method="POST" class="form-box" style="max-width:400px; margin:auto;">
+
+        <input type="hidden" name="id_torneo" value="{{ torneo[0] }}">
+
+        <label>Seleccionar Equipo:</label>
+        <select name="id_equipo" required>
+          {% for eq in disponibles %}
+            <option value="{{ eq[0] }}">{{ eq[1] }}</option>
+          {% endfor %}
+        </select>
+
+        <button type="submit" class="btn form-btn sport-green">Agregar Equipo</button>
+      </form>
+    {% else %}
+      <div class="msg error">
+        Se ha alcanzado el número máximo de equipos permitidos para este torneo.
+      </div>
+    {% endif %}
+
+    <br><hr><br>
+
+    <h2 class="subtitle">Equipos Registrados</h2>
+
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Equipo</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for eq in equipos %}
+        <tr>
+          <td>{{ eq[1] }}</td>
+          <td>{{ 'Activo' if eq[2] else 'Inactivo' }}</td>
+
+          <td class="acciones">
+            <a href="{{ url_for('equipo_torneo.cambiar_estado_equipo_torneo', id_torneo=torneo[0], id_equipo=eq[0]) }}"
+               class="btn-action sport-blue">
+              {{ 'Inactivar' if eq[2] else 'Activar' }}
+            </a>
+
+            <a href="{{ url_for('equipo_torneo.eliminar_equipo_torneo', id_torneo=torneo[0], id_equipo=eq[0]) }}"
+               onclick="return confirm('¿Desea eliminar este equipo del torneo?')"
+               class="btn-action sport-red">
+              Eliminar
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="buttons">
+      <a href="{{ url_for('torneos.listar_torneos') }}" class="btn secondary">Volver a Torneos</a>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

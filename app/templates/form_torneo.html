@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar Torneo</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}">
+</head>
+
+<body>
+
+<div class="overlay">
+
+  <div class="container form-container">
+
+    <h1 class="title">Registrar Torneo</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="messages">
+          {% for category, message in messages %}
+            <div class="msg {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('torneos.insertar_torneo') }}" method="POST" class="form-box">
+
+      <label>Nombre:</label>
+      <input type="text" name="nombre" value="{{ nombre or '' }}" required>
+
+      <label>Mín. Equipos:</label>
+      <input type="number" name="min_equipos" value="{{ min_equipos or '' }}" required>
+
+      <label>Máx. Equipos:</label>
+      <input type="number" name="max_equipos" value="{{ max_equipos or '' }}" required>
+
+      <label>Mín. Jugadores:</label>
+      <input type="number" name="min_jugadores" value="{{ min_jugadores or '' }}" required>
+
+      <label>Máx. Jugadores:</label>
+      <input type="number" name="max_jugadores" value="{{ max_jugadores or '' }}" required>
+
+      <label>Jugadores en cancha:</label>
+      <input type="number" name="jugadores_cancha" value="{{ jugadores_cancha or '' }}" required>
+
+      <label>Género:</label>
+      <select name="genero" required>
+        <option value="M" {% if genero == 'M' %}selected{% endif %}>Masculino</option>
+        <option value="F" {% if genero == 'F' %}selected{% endif %}>Femenino</option>
+        <option value="NULL" {% if genero is none or genero == 'NULL' %}selected{% endif %}>Mixto</option>
+      </select>
+
+      <label>Fecha Inicio:</label>
+      <input type="date" name="fecini" value="{{ fecini or '' }}" required>
+
+      <label>Fecha Fin:</label>
+      <input type="date" name="fecfin" value="{{ fecfin or '' }}" required>
+
+      <label>Deporte:</label>
+      <select name="deporte">
+        {% for dep in deportes %}
+          <option value="{{ dep[0] }}" {% if dep[0] == deporte %}selected{% endif %}>{{ dep[1] }}</option>
+        {% endfor %}
+      </select>
+
+      <fieldset class="form-fieldset">
+        <legend>Profesionalismos:</legend>
+
+        {% for prfm in profesionalismos %}
+        <label class="checkbox-line">
+          <input type="checkbox" name="profesionalismos" value="{{ prfm[0] }}"
+                 {% if profesionalismos_seleccionados and prfm[0] in profesionalismos_seleccionados %}checked{% endif %}>
+          {{ prfm[1] }}
+        </label>
+        {% endfor %}
+      </fieldset>
+
+      <button type="submit" class="btn form-btn">Guardar Torneo</button>
+    </form>
+
+    <div class="buttons">
+      <a href="{{ url_for('torneos.listar_torneos') }}" class="btn secondary">Ver Lista</a>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Profesionalismos</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}">
+</head>
+<body>
+
+<div class="overlay">
+
+  <div class="container">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="messages">
+          {% for category, message in messages %}
+            <div class="msg {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <h1 class="title">Profesionalismos Registrados</h1>
+
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Descripción</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in profesionalismos %}
+        <tr>
+          <td>{{ p[2] }}</td>
+          <td class="acciones">
+            <a class="btn-action edit" href="/editar_profesionalismos/{{ p[0] }}">Editar</a>
+            <a class="btn-action delete" href="/eliminar_profesionalismo/{{ p[0] }}"
+               onclick="return confirm('¿Seguro que deseas eliminar este registro?')">Eliminar</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="buttons">
+      <a class="btn" href="/profesionalismos">Registrar nuevo Profesionalismo</a>
+      <a class="btn secondary" href="/">Volver al Inicio</a>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

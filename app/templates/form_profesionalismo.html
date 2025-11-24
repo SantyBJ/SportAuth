@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar Profesionalismo</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}">
+</head>
+<body>
+
+<div class="overlay">
+
+  <div class="container form-container">
+
+    <h1 class="title">Registrar Profesionalismo</h1>
+
+    <form action="/insertar_profesionalismo" method="post" class="form-box">
+
+      <!-- Eliminado campo deporte -->
+
+      <label for="descripcion">Descripción:</label>
+      <input type="text" id="descripcion" name="descripcion" required>
+
+      <button type="submit" class="btn form-btn">Guardar</button>
+
+    </form>
+
+    <div class="buttons">
+      <a href="/listar_profesionalismos" class="btn secondary">Ver lista</a>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

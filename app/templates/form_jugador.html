@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar Jugador</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}">
+</head>
+<body>
+
+<div class="overlay">
+
+  <div class="container form-container">
+
+    <h1 class="title">Registrar Jugador</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="messages">
+          {% for category, message in messages %}
+            <div class="msg {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('jugadores.insertar_jugador') }}" method="post" class="form-box">
+
+      <label for="cedula">Cédula:</label>
+      <input type="number" id="cedula" name="cedula" value="{{ cedula or '' }}" required>
+
+      <label for="nombres">Nombres:</label>
+      <input type="text" id="nombres" name="nombres" value="{{ nombres or '' }}" required>
+
+      <label for="apellidos">Apellidos:</label>
+      <input type="text" id="apellidos" name="apellidos" value="{{ apellidos or '' }}" required>
+
+      <label for="genero">Género:</label>
+      <select id="genero" name="genero" required>
+        <option value="M" {% if genero == 'M' %}selected{% endif %}>Masculino</option>
+        <option value="F" {% if genero == 'F' %}selected{% endif %}>Femenino</option>
+      </select>
+
+      <label for="profesionalismo">Profesionalismo:</label>
+      <select id="profesionalismo" name="profesionalismo" required>
+        {% for p in profesionalismos %}
+          <option value="{{ p[0] }}" {% if p[0]|string == profesionalismo|string %}selected{% endif %}>{{ p[1] }}</option>
+        {% endfor %}
+      </select>
+
+      <button type="submit" class="btn form-btn">Guardar</button>
+    </form>
+
+    <div class="buttons">
+      <a href="{{ url_for('jugadores.listar_jugadores') }}" class="btn secondary">Volver a la lista</a>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

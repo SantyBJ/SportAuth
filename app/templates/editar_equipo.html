@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Equipo</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}">
+</head>
+<body>
+
+<div class="overlay">
+
+  <div class="container form-container">
+
+    <h1 class="title">Editar Equipo</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="messages">
+          {% for category, message in messages %}
+            <div class="msg {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('equipos.actualizar_equipo') }}" method="POST" class="form-box">
+
+      <input type="hidden" name="id" value="{{ equipo[0] }}">
+
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" value="{{ equipo[1] }}" required>
+
+      <div class="switch-container">
+          <span class="switch-label">Estado:</span>
+            
+          <label class="switch">
+              <input type="checkbox" id="estado" name="estado" {% if equipo[2] %}checked{% endif %}>
+              <span class="slider"></span>
+          </label>
+        
+          {% if equipo[2] %}
+              <span>Activo</span>
+          {% else %}
+              <span>Inactivo</span>
+          {% endif %}
+      </div>
+
+      <button type="submit" class="btn form-btn">Actualizar</button>
+
+    </form>
+
+    <div class="buttons">
+      <a href="{{ url_for('equipos.listar_equipos') }}" class="btn secondary">Volver a la lista</a>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

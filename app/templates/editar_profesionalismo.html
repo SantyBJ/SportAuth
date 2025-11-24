@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Profesionalismo</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}">
+</head>
+<body>
+
+<div class="overlay">
+
+  <div class="container form-container">
+
+    <h1 class="title">Editar Profesionalismo</h1>
+
+    <form action="/actualizar_profesionalismo" method="post" class="form-box">
+
+      <input type="hidden" name="id" value="{{ profesionalismo[0] }}">
+
+      <label for="descripcion">Descripción:</label>
+      <input type="text" id="descripcion" name="descripcion" value="{{ profesionalismo[1] }}" required>
+
+      <button type="submit" class="btn form-btn">Actualizar</button>
+
+    </form>
+
+    <div class="buttons">
+      <a href="/listar_profesionalismos" class="btn secondary">Volver a la lista</a>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

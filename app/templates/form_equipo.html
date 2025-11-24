@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar Equipo</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}">
+</head>
+<body>
+
+<div class="overlay">
+
+  <div class="container form-container">
+
+    <h1 class="title">Registrar Equipo</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="messages">
+          {% for category, message in messages %}
+            <div class="msg {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('equipos.insertar_equipo') }}" method="POST" class="form-box">
+
+      <label for="nombre">Nombre del equipo:</label>
+      <input type="text" id="nombre" name="nombre" required>
+      <button type="submit" class="btn form-btn">Guardar</button>
+
+    </form>
+
+    <div class="buttons">
+      <a href="{{ url_for('equipos.listar_equipos') }}" class="btn secondary">Ver lista de equipos</a>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Rendimiento y Reputación de Jugadores</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/rendimiento.css') }}">
+</head>
+<body>
+
+<div class="overlay">
+  <div class="rend-container">
+
+    <h1 class="rend-title">Rendimiento y Reputación de Jugadores</h1>
+
+    <table class="rend-table">
+        <thead>
+          <tr>
+            <th>Jugador</th>
+            <th>Goles</th>
+            <th>Asistencias</th>
+            <th>Faltas (L/M/G)</th>
+            <th>Partidos jugados</th>
+            <th>Rendimiento promedio</th>
+            <th>Reputación</th>
+            <th>Predicción próximo partido</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ced, j in jugadores.items() %}
+          <tr>
+            <td>{{ j.nombre }}</td>
+            <td>{{ j.total_goles }}</td>
+            <td>{{ j.total_asist }}</td>
+            <td>{{ j.total_l }} / {{ j.total_m }} / {{ j.total_g }}</td>
+            <td>{{ j.partidos_jugados }}</td>
+            <td>{{ j.rendimiento_prom }} / 100</td>
+            <td>{{ j.reputacion }} ⭐</td>
+            <td>
+              {% if j.prediccion == 0 %} Bajo {% endif %}
+              {% if j.prediccion == 1 %} Medio {% endif %}
+              {% if j.prediccion == 2 %} Alto {% endif %}
+              {% if j.prediccion is none %} N/A {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="rend-buttons">
+        <a href="/listar_jugadores" class="btn secondary">Volver al listado</a>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

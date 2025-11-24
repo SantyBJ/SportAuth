@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Partido</title>
+
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}">
+</head>
+
+<body>
+
+<div class="overlay">
+
+  <div class="container">
+
+    <h1 class="title">Editar Partido</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="messages">
+        {% for category, message in messages %}
+          <div class="msg {{ category }}">{{ message }}</div>
+        {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form class="form-box"
+          action="{{ url_for('partidos.actualizar_partido', id_torneo=id_torneo) }}"
+          method="post">
+
+      <input type="hidden" name="id_partido" value="{{ partido[0] }}">
+
+      <label>Equipo Local:</label>
+      <select name="local" required>
+        {% for e in equipos %}
+          <option value="{{ e[0] }}" {% if e[0] == partido[1] %}selected{% endif %}>
+            {{ e[1] }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <label>Equipo Visitante:</label>
+      <select name="visitante" required>
+        {% for e in equipos %}
+          <option value="{{ e[0] }}" {% if e[0] == partido[2] %}selected{% endif %}>
+            {{ e[1] }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <label>Fecha:</label>
+      <input type="datetime-local"
+        name="fecha"
+        class="datetime-input"
+        required
+        value="{{ partido[3]|replace(' ', 'T') }}">
+
+      <button type="submit" class="btn form-btn">Actualizar</button>
+    </form>
+
+    <div class="buttons">
+      <a href="{{ url_for('partidos.listar_partidos', id_torneo=id_torneo) }}"
+         class="btn secondary">
+        Volver a la Lista
+      </a>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

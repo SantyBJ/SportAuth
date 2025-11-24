@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Listado de Partidos</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_v2.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/general.css') }}">
+</head>
+
+<body>
+
+<div class="overlay">
+
+  <div class="container">
+
+    <h1 class="title">Partidos del Torneo: {{ torneo[0] }}</h1>
+
+    <!-- BOTÓN VOLVER -->
+    <div class="buttons">
+      <a href="{{ url_for('torneos.listar_torneos') }}" class="btn secondary">Volver a Torneos</a>
+      <a href="{{ url_for('partidos.form_partidos', id_torneo=id_torneo) }}" class="btn sport-green">
+        Registrar nuevo partido
+      </a>
+    </div>
+
+    <!-- MENSAJES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="messages">
+          {% for category, message in messages %}
+            <div class="msg {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- TABLA -->
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Local</th>
+          <th>Visitante</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for p in partidos %}
+        <tr>
+          <td>{{ p[0] }}</td>
+          <td>{{ p[1] }}</td>
+          <td>{{ p[2] }}</td>
+          <td>{{ p[3] }}</td>
+          <td>{{ p[4] }}</td>
+          <td class="acciones-jugador">
+
+            <a href="{{ url_for('partidos.editar_partido', id_torneo=id_torneo, id_partido=p[0]) }}"
+               class="btn-action sport-yellow">
+              Editar
+            </a>
+
+            <a href="{{ url_for('partidos.eliminar_partido', id_torneo=id_torneo, id_partido=p[0]) }}"
+               onclick="return confirm('¿Eliminar este partido?');"
+               class="btn-action sport-red">
+              Eliminar
+            </a>
+
+            <a href="{{ url_for('registros.gestion_jugadores_partido', id_torneo=id_torneo, id_partido=p[0]) }}"
+               class="btn-action sport-blue">
+              Jugadores
+            </a>
+
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+
+</div>
+
+</body>
+</html>
