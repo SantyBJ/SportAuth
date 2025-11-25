@@ -127,7 +127,7 @@ def rendimiento_jugadores():
         total_l = sum(h['faltas_l'] for h in info['historial'])
         total_m = sum(h['faltas_m'] for h in info['historial'])
         total_g = sum(h['faltas_g'] for h in info['historial'])
-        partidos = len(info['historial'])
+        partidos = max(round(len(info['historial'])/5), 1)
         rendimiento_prom = sum(h['rendimiento'] for h in info['historial']) / partidos
 
         jugadores[cedula].update({
