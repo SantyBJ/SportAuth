@@ -9,19 +9,18 @@
 <body>
 
 <div class="overlay">
-
   <div class="container">
 
     <h1 class="title">Lista de Equipos</h1>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
+    {% if messages %}
       <div class="messages">
         {% for category, message in messages %}
           <div class="msg {{ category }}">{{ message }}</div>
         {% endfor %}
       </div>
-      {% endif %}
+    {% endif %}
     {% endwith %}
 
     <div class="buttons">
@@ -35,19 +34,40 @@
           <th>ID</th>
           <th>Nombre</th>
           <th>Estado</th>
+          <th>PJ</th>
+          <th>PG</th>
+          <th>PE</th>
+          <th>PP</th>
+          <th>GF</th>
+          <th>GC</th>
+          <th>DG</th>
+          <th>Rend (%)</th>
           <th>Acciones</th>
         </tr>
       </thead>
+
       <tbody>
         {% for eq in equipos %}
         <tr>
-          <td>{{ eq[0] }}</td>
-          <td>{{ eq[1] }}</td>
-          <td>{{ 'Activo' if eq[2] else 'Inactivo' }}</td>
+          <td>{{ eq.id }}</td>
+          <td>{{ eq.nombre }}</td>
+          <td>{{ 'Activo' if eq.estado else 'Inactivo' }}</td>
+
+          <td>{{ eq.pj }}</td>
+          <td>{{ eq.pg }}</td>
+          <td>{{ eq.pe }}</td>
+          <td>{{ eq.pp }}</td>
+
+          <td>{{ eq.gf }}</td>
+          <td>{{ eq.gc }}</td>
+          <td>{{ eq.dg }}</td>
+
+          <td>{{ eq.rend }}%</td>
+
           <td class="acciones">
-            <a class="btn-action edit" href="{{ url_for('equipos.editar_equipo', id=eq[0]) }}">Editar</a>
+            <a class="btn-action edit" href="{{ url_for('equipos.editar_equipo', id=eq.id) }}">Editar</a>
             <a class="btn-action delete"
-               href="{{ url_for('equipos.eliminar_equipo', id=eq[0]) }}"
+               href="{{ url_for('equipos.eliminar_equipo', id=eq.id) }}"
                onclick="return confirm('¿Desea eliminar este equipo?')">
                Eliminar
             </a>
@@ -58,7 +78,6 @@
     </table>
 
   </div>
-
 </div>
 
 </body>

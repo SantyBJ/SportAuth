@@ -61,12 +61,33 @@
       <div class="botones-partido" style="margin-top:20px; display:flex; gap:15px;">
 
         {% if prtd_estado == 'P' %}
-          <a href="{{ url_for('registros.iniciar_partido', id_torneo=id_torneo, id_partido=id_partido) }}"
-             class="btn sport-green">Iniciar partido</a>
-
+              
+          <a href="{{ url_for('registros.iniciar_partido',
+                               id_torneo=id_torneo,
+                               id_partido=id_partido) }}"
+             class="btn sport-green">
+             Iniciar partido
+          </a>
+        
+          <form method="POST"
+                action="{{ url_for('rendimiento.auto_registrar_jugadores',
+                                   partido=id_partido,
+                                   torneo=id_torneo) }}"
+                style="display:inline;">
+              <button class="btn sport-blue">
+                Asignación Automatica
+              </button>
+          </form>
+        
         {% elif prtd_estado == 'E' %}
-          <a href="{{ url_for('registros.finalizar_partido', id_torneo=id_torneo, id_partido=id_partido) }}"
-             class="btn sport-red">Finalizar partido</a>
+        
+          <a href="{{ url_for('registros.finalizar_partido',
+                               id_torneo=id_torneo,
+                               id_partido=id_partido) }}"
+             class="btn sport-red">
+             Finalizar partido
+          </a>
+        
         {% endif %}
 
         <a href="{{ url_for('partidos.listar_partidos', id_torneo=id_torneo) }}" class="btn secondary">

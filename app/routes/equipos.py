@@ -61,14 +61,93 @@ def insertar_equipo():
 def listar_equipos():
     conn = get_connection()
     cursor = conn.cursor()
+
+    # Obtener equipos
     cursor.execute("""
         SELECT eqpo_eqpo, eqpo_nombre, eqpo_estado
         FROM t_Equipos
         ORDER BY eqpo_eqpo;
     """)
-    equipos = cursor.fetchall()
+    equipos_raw = cursor.fetchall()
+
+    equipos = []
+
+    for id_equipo, nombre, estado in equipos_raw:
+
+        # --- 1. Obtener partidos del equipo ---
+        cursor.execute("""
+            SELECT prtd_prtd, prtd_local, prtd_visitante
+            FROM t_partidos
+            WHERE prtd_local = %s OR prtd_visitante = %s;
+        """, (id_equipo, id_equipo))
+        partidos = cursor.fetchall()
+
+        partidos_jugados = len(partidos)
+        ganados = empatados = perdidos = 0
+        goles_favor = goles_contra = 0
+
+        for prtd_id, loc, vis in partidos:
+
+            # --- 2. Goles a favor ---
+            cursor.execute("""
+                SELECT SUM(COALESCE(r.rgtr_goles,0))
+                FROM t_registros r
+                JOIN t_jugador_torneo jt 
+                    ON jt.jgtr_jugador = r.rgtr_jugador 
+                   AND jt.jgtr_torneo = r.rgtr_torneo
+                WHERE r.rgtr_partido = %s
+                  AND jt.jgtr_equipo = %s;
+            """, (prtd_id, id_equipo))
+            gf = cursor.fetchone()[0] or 0
+
+            # --- 3. Goles en contra (sumar goles del rival) ---
+            rival = vis if id_equipo == loc else loc
+
+            cursor.execute("""
+                SELECT SUM(COALESCE(r.rgtr_goles,0))
+                FROM t_registros r
+                JOIN t_jugador_torneo jt 
+                    ON jt.jgtr_jugador = r.rgtr_jugador 
+                   AND jt.jgtr_torneo = r.rgtr_torneo
+                WHERE r.rgtr_partido = %s
+                  AND jt.jgtr_equipo = %s;
+            """, (prtd_id, rival))
+            gc = cursor.fetchone()[0] or 0
+
+            goles_favor += gf
+            goles_contra += gc
+
+            # --- 4. Determinar resultado ---
+            if gf > gc:
+                ganados += 1
+            elif gf == gc:
+                empatados += 1
+            else:
+                perdidos += 1
+
+        # --- 5. Calcular rendimiento ---
+        puntos = (ganados * 3) + (empatados * 1)
+        rendimiento = 0
+        if partidos_jugados > 0:
+            rendimiento = round((puntos / (partidos_jugados * 3)) * 100, 1)
+
+        equipos.append({
+            'id': id_equipo,
+            'nombre': nombre,
+            'estado': estado,
+            'pj': partidos_jugados,
+            'pg': ganados,
+            'pe': empatados,
+            'pp': perdidos,
+            'gf': goles_favor,
+            'gc': goles_contra,
+            'dg': goles_favor - goles_contra,
+            'rend': rendimiento
+        })
+
     cursor.close()
     conn.close()
+
     return render_template('lista_equipos.html', equipos=equipos)
 
 # --- Editar equipo ---

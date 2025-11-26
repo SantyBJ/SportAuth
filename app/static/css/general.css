@@ -530,3 +530,145 @@ td.acciones a.btn-action {
     display: inline-block !important;
 }
 
+/* ============================================
+   MEJORAS VISUALES PARA LISTA DE EQUIPOS
+   ============================================ */
+
+/* ----- Contenedor general ----- */
+.container {
+    background: rgba(0,0,0,0.6);
+    padding: 45px;
+    border-radius: 22px;
+    width: 1000px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.8);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Animación leve */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ----- Título más elegante ----- */
+.title {
+    font-size: 44px;
+    letter-spacing: 4px;
+    margin-bottom: 35px;
+    text-shadow: 0 0 12px rgba(0,255,80,0.7);
+}
+
+/* ----- Estética mejorada para la tabla ----- */
+.styled-table {
+    font-size: 17px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(6px);
+}
+
+/* Cabecera más sólida */
+.styled-table thead {
+    background: linear-gradient(to right, #009432, #00b44e);
+    color: white;
+    border-bottom: 3px solid rgba(255,255,255,0.2);
+}
+
+.styled-table th {
+    padding: 14px 10px;
+    font-size: 17px;
+    text-shadow: 0 0 5px rgba(0,0,0,0.6);
+}
+
+/* Celdas mejor espaciadas */
+.styled-table td {
+    padding: 14px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+/* Filas alternas más limpias */
+.styled-table tr:nth-child(even) {
+    background-color: rgba(255,255,255,0.06);
+}
+
+/* Hover mejorado */
+.styled-table tbody tr:hover {
+    background-color: rgba(0,148,50,0.45) !important;
+    transform: scale(1.01);
+    transition: 0.2s ease-in-out;
+}
+
+/* ----- Columnas numéricas mejor alineadas ----- */
+.styled-table td:nth-child(4),
+.styled-table td:nth-child(5),
+.styled-table td:nth-child(6),
+.styled-table td:nth-child(7),
+.styled-table td:nth-child(8),
+.styled-table td:nth-child(9),
+.styled-table td:nth-child(10),
+.styled-table td:nth-child(11) {
+    font-weight: 600;
+}
+
+/* Diferencia de goles destacada */
+.styled-table td:nth-child(10) {
+    color: #1dd158;
+    font-weight: 700;
+    text-shadow: 0 0 4px rgba(0,255,0,0.4);
+}
+
+/* Rendimiento más visual */
+.styled-table td:nth-child(11) {
+    font-weight: 700;
+    color: #00ffa6;
+    text-shadow: 0 0 4px rgba(0,255,200,0.4);
+}
+
+/* ----- Botones de acciones más estilizados ----- */
+td.acciones {
+    gap: 8px !important;
+}
+
+.btn-action {
+    padding: 7px 12px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 7px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.6);
+}
+
+/* Colores con más profundidad */
+.btn-action.edit {
+    background: linear-gradient(#009432, #007a29);
+}
+.btn-action.edit:hover {
+    background: linear-gradient(#00b84a, #009432);
+}
+
+.btn-action.delete {
+    background: linear-gradient(#d63031, #b71c1c);
+}
+.btn-action.delete:hover {
+    background: linear-gradient(#ff4d4d, #d63031);
+}
+
+/* ----- Botones superiores con enfoque moderno ----- */
+.buttons .btn {
+    padding: 15px 30px;
+    font-size: 20px;
+    border-width: 3px;
+    border-radius: 12px;
+    letter-spacing: 1px;
+}
+
+.btn:hover {
+    transform: translateY(-2px) scale(1.05);
+}
+
+/* ----- Nombres de equipos con mejor legibilidad ----- */
+.styled-table td:nth-child(2) {
+    font-size: 18px;
+    font-weight: 600;
+    text-align: left;
+    padding-left: 18px !important;
+}
